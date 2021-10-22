@@ -56,38 +56,38 @@ function FigJenda() {
             time: 300
         },
         {
-            name: "Sailboat Exercise or something else long",
+            name: "Sailboat Exercise",
             emoji: "⛵️",
             time: 1800
         },
         {
-          name: "Sailboat Exercise or something else long",
-          emoji: "⛵️",
-          time: 1800
+          name: "Dot Voting",
+          emoji: "🔵",
+          time: 600
         },
         {
-          name: "Sailboat Exercise or something else long",
-          emoji: "⛵️",
-          time: 1800
+          name: "Crazy 8s",
+          emoji: "🎱",
+          time: 480
         },
         {
-          name: "Sailboat Exercise or something else long",
-          emoji: "⛵️",
-          time: 1800
+          name: "Action Board or something else long",
+          emoji: "⚡️",
+          time: 600
         },
         {
-          name: "Sailboat Exercise or something else long",
-          emoji: "⛵️",
-          time: 1800
+          name: "Thanks & Kudos",
+          emoji: "🙏",
+          time: 60
         },
     ]);
 
 function timeConvert(num)
 { 
   const minutes = Math.floor(num / 60);  
-  const paddedMins = minutes > 10 ? minutes : `0${minutes}`
+  const paddedMins = minutes > 9 ? minutes : `0${minutes}`
   const seconds = num % 60;
-  const paddedSecs = seconds > 10 ? seconds : `0${seconds}`
+  const paddedSecs = seconds > 9 ? seconds : `0${seconds}`
   return paddedMins + ":" + paddedSecs;         
 }
 
