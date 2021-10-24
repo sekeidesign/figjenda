@@ -284,37 +284,19 @@ const addBtn = (
 
 // ---- WIDGET ----------------
 function FigJenda() {
-  const [items] = useSyncedState('items', [
+  const [items, setItem] = useSyncedState('items', [
       {
+          id: 1,
           name: "Intros",
           emoji: "👋",
           time: 300
       },
       {
+          id: 2,
           name: "Sailboat Exercise",
           emoji: "⛵️",
           time: 1800
-      },
-      {
-        name: "Dot Voting",
-        emoji: "🔵",
-        time: 600
-      },
-      {
-        name: "Crazy 8s",
-        emoji: "🎱",
-        time: 480
-      },
-      {
-        name: "Action Board or something else long",
-        emoji: "⚡️",
-        time: 600
-      },
-      {
-        name: "Thanks & Kudos",
-        emoji: "🙏",
-        time: 60
-      },
+      }
   ]);
 
   const truncateLength = 24
@@ -413,6 +395,9 @@ function FigJenda() {
               >
                 <SVG 
                   src={deleteIcon}
+                  onClick={() => {
+                    setItem(items.filter(thing => thing.id != items[item].id))
+                  }}
                 ></SVG>
               </AutoLayout>
               <AutoLayout

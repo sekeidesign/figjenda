@@ -201,36 +201,18 @@
     }
   }, "Add Item"));
   function FigJenda() {
-    const [items] = useSyncedState("items", [
+    const [items, setItem] = useSyncedState("items", [
       {
+        id: 1,
         name: "Intros",
         emoji: "\u{1F44B}",
         time: 300
       },
       {
+        id: 2,
         name: "Sailboat Exercise",
         emoji: "\u26F5\uFE0F",
         time: 1800
-      },
-      {
-        name: "Dot Voting",
-        emoji: "\u{1F535}",
-        time: 600
-      },
-      {
-        name: "Crazy 8s",
-        emoji: "\u{1F3B1}",
-        time: 480
-      },
-      {
-        name: "Action Board or something else long",
-        emoji: "\u26A1\uFE0F",
-        time: 600
-      },
-      {
-        name: "Thanks & Kudos",
-        emoji: "\u{1F64F}",
-        time: 60
       }
     ]);
     const truncateLength = 24;
@@ -315,7 +297,10 @@
         padding: 6,
         spacing: 0
       }, /* @__PURE__ */ figma.widget.h(SVG, {
-        src: deleteIcon
+        src: deleteIcon,
+        onClick: () => {
+          setItem(items.filter((thing) => thing.id != items[item].id));
+        }
       })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
         verticalAlignItems: "center",
         horizontalAlignItems: "center",
