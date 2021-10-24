@@ -162,6 +162,7 @@
       width: "hug-contents",
       padding: 0,
       spacing: 8,
+      fill: "#FFF",
       onClick: () => {
         toggleAutoPlay(!isAutoPlay);
       }
@@ -272,6 +273,7 @@
       width: 368,
       padding: 12,
       spacing: 10,
+      fill: "#FFF",
       onClick: () => {
         openUI("add");
       }
