@@ -390,7 +390,7 @@
     }
     ;
     const emptyState = /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hide: items.length > 0,
+      hidden: items.length > 0,
       verticalAlignItems: "start",
       horizontalAlignItems: "center",
       direction: "vertical",

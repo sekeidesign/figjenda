@@ -469,7 +469,7 @@ const plusIcon = `
   
   const emptyState = (
     <AutoLayout
-      hide={items.length > 0}
+      hidden={items.length > 0}
       verticalAlignItems="start"
       horizontalAlignItems="center"
       direction="vertical"
