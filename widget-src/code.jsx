@@ -79,53 +79,50 @@ const editIconDisabled = `
   <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
 </svg>
 `;
-
 const unlockIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#fff" class="bi bi-lock" viewBox="0 0 16 16">
   <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
 </svg>
 `;
-
 const lockIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#fff" class="bi bi-unlock" viewBox="0 0 16 16">
   <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2zM3 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H3z"/>
 </svg>
 `;
-
 const toggleOn = `
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000" class="bi bi-toggle-on" viewBox="0 0 16 16">
   <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10H5zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>
 </svg>
 `;
-
 const toggleOff = `
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000" class="bi bi-toggle-off" viewBox="0 0 16 16">
   <path d="M11 4a4 4 0 0 1 0 8H8a4.992 4.992 0 0 0 2-4 4.992 4.992 0 0 0-2-4h3zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8zM0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5z"/>
 </svg>
 `;
-
 const stopIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="${items.length > 0 ? "#F24822" : "rgba(0,0,0,.3)"}" class="bi bi-stop" viewBox="0 0 16 16">
   <path d="M3.5 5A1.5 1.5 0 0 1 5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5zM5 4.5a.5.5 0 0 0-.5.5v6a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5H5z"/>
 </svg>
 `;
-
 const skipIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="${items.length > 0 ? "rgba(0,0,0,.8)" : "rgba(0,0,0,.3)"}" class="bi bi-skip-forward" viewBox="0 0 16 16">
   <path d="M15.5 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V8.752l-6.267 3.636c-.52.302-1.233-.043-1.233-.696v-2.94l-6.267 3.636C.713 12.69 0 12.345 0 11.692V4.308c0-.653.713-.998 1.233-.696L7.5 7.248v-2.94c0-.653.713-.998 1.233-.696L15 7.248V4a.5.5 0 0 1 .5-.5zM1 4.633v6.734L6.804 8 1 4.633zm7.5 0v6.734L14.304 8 8.5 4.633z"/>
 </svg>
 `;
-
 const playIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#fff" class="bi bi-play" viewBox="0 0 16 16">
   <path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"/>
 </svg>
 `;
-
 const pauseIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#FFF" class="bi bi-pause" viewBox="0 0 16 16">
   <path d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"/>
 </svg>
+`;
+const plusIcon = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#FFF" class="bi bi-plus-lg" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+  </svg>
 `;
 
   // ---- COMPONENTS ----------------
@@ -174,6 +171,11 @@ const pauseIcon = `
         horizontalAlignItems="center"
         height="hug-contents"
         width="hug-contents"
+        fill={{
+          type: 'solid',
+          color: '#FFF',
+          opacity: .01
+        }}
         padding={6}
         spacing={0}
         onClick={() => {
@@ -261,6 +263,7 @@ const pauseIcon = `
           width="hug-contents"
           padding={12}
           cornerRadius={999}
+          fill="#FFF"
           stroke={{
             type: 'solid',
             color: '#F24822'
@@ -307,6 +310,7 @@ const pauseIcon = `
           width="hug-contents"
           padding={12}
           cornerRadius={999}
+          fill="#FFF"
           stroke={{
             type: 'solid',
             color: "#000",
@@ -322,6 +326,7 @@ const pauseIcon = `
           width="hug-contents"
           padding={12}
           cornerRadius={999}
+          fill="#FFF"
           stroke={{
             type: 'solid',
             color: "#000",
@@ -336,6 +341,7 @@ const pauseIcon = `
   
   const addBtn = (
     <AutoLayout
+      hidden={items.length === 0}
       verticalAlignItems="center"
       height="hug-contents"
       width={368}
@@ -373,6 +379,218 @@ const pauseIcon = `
       >
         Add Item
       </Text>
+    </AutoLayout>
+  )
+
+  function emptyGraphic() {
+    const emojis = [{id: 1, emoji: "👋"}, {id: 2, emoji: "🚀"}, {id: 3, emoji: "⚡️"}];
+    let emojiCards = []
+    for (let item of emojis) {
+      const emojiCard = (
+        <AutoLayout
+          key={item.id}
+          verticalAlignItems="center"
+          horizontalAlignItems="start"
+          height="hug-contents"
+          width={160}
+          padding={4}
+          spacing={4}
+          cornerRadius={6}
+          fill={{
+            type: 'solid',
+            color: '#FFF',
+            opacity: .9
+          }}
+          effect={{
+            type: 'drop-shadow',
+            color: {
+              r: .2,
+              g: .29,
+              b: .74,
+              a: .15
+            },
+            offset: {x: 0, y: 4},
+            blur: 6
+          }}
+        >
+          <AutoLayout
+            padding={8}
+            cornerRadius={4}
+            fill="#18A0FB"
+          >
+            <Text width="hug-contents" height="hug-contents" fontSize={12} lineHeight={12}>{item.emoji}</Text>
+          </AutoLayout>
+          <AutoLayout
+            spacing={4}
+            height="hug-contents"
+            width="hug-contents"
+            direction="vertical"
+          >
+            <Frame
+              height={4}
+              width={40}
+              cornerRadius={99}
+              fill={{
+                type: "solid",
+                color: "#18A0FB",
+                opacity: .5
+              }}
+            ></Frame>
+            <Frame
+              height={4}
+              width={96}
+              cornerRadius={99}
+              fill={{
+                type: "solid",
+                color: "#18A0FB",
+                opacity: .15
+              }}
+            ></Frame>
+          </AutoLayout>
+        </AutoLayout>
+      )
+      emojiCards.push(emojiCard)
+    }
+    return (
+      <AutoLayout
+        verticalAlignItems="center"
+        horizontalAlignItems="center"
+        overflow="visible"
+        direction="vertical"
+        height="hug-contents"
+        width="fill-parent"
+        padding={0}
+        spacing={8}
+      >
+        {emojiCards}
+      </AutoLayout>
+    );
+  };
+  
+  const emptyState = (
+    <AutoLayout
+      hide={items.length > 0}
+      verticalAlignItems="start"
+      horizontalAlignItems="center"
+      direction="vertical"
+      height="hug-contents"
+      width="fill-parent"
+      padding={{
+        top: 0,
+        right: 16,
+        left: 16,
+        bottom: 32
+      }}
+      spacing={16}
+      fill="#FFF"
+    >
+      <AutoLayout
+        width="fill-parent"
+        height={150}
+        verticalAlignItems="center"
+        horizontalAlignItems="center"
+        direction="vertical"
+      >
+        <AutoLayout
+          height={1}
+          verticalAlignItems="center"
+          horizontalAlignItems="center"
+          overflow="visible"
+          padding={{
+            bottom: 40,
+            top: 0,
+            left: 0,
+            right: 0
+          }}
+        >
+          <Frame
+            width={248}
+            height={248}
+            cornerRadius={999}
+            fill={{
+              type: 'solid',
+              color: '#18A0FB',
+              opacity: .1
+            }}
+          ></Frame>
+        </AutoLayout>
+        {emptyGraphic()}
+      </AutoLayout>
+      <AutoLayout
+        verticalAlignItems="center"
+        horizontalAlignItems="center"
+        direction="vertical"
+        height="hug-contents"
+        width="fill-parent"
+        padding={0}
+        spacing={8}
+      >
+        <AutoLayout
+          verticalAlignItems="center"
+          horizontalAlignItems="center"
+          direction="vertical"
+          height="hug-contents"
+          width="hug-contents"
+          padding={0}
+          spacing={0}
+        >
+          <Text
+            fontSize={14}
+            lineHeight={24}
+            fontWeight={600}
+            fontFamily="Inter"
+            width="hug-contents"
+            fill={{
+              type: 'solid',
+              color: '#000',
+              opacity: .8
+            }}
+          >It's looking a little empty here</Text>
+          <Text
+            fontSize={11}
+            lineHeight={16}
+            fontWeight={400}
+            fontFamily="Inter"
+            width="hug-contents"
+            fill={{
+              type: 'solid',
+              color: '#000',
+              opacity: .8
+            }}
+          >Start by adding an agenda item 👇</Text>
+        </AutoLayout>
+        <AutoLayout
+          verticalAlignItems="center"
+          horizontalAlignItems="center"
+          height="hug-contents"
+          width="hug-contents"
+          padding={{
+            top: 4,
+            right: 16,
+            bottom: 4,
+            left: 12
+          }}
+          spacing={4}
+          fill="#18A0FB"
+          cornerRadius={6}
+          onClick={() => {
+            console.log("Add first item")
+          }}
+        >
+          <SVG src={plusIcon}></SVG>
+          <Text
+            fontSize={14}
+            lineHeight={24}
+            fontWeight={400}
+            fontFamily="Inter"
+            width="hug-contents"
+            fill={{
+              type: 'solid',
+              color: '#FFF'
+            }}
+          >Add item</Text>
+        </AutoLayout>
+      </AutoLayout>
     </AutoLayout>
   )
   
@@ -503,14 +721,15 @@ const pauseIcon = `
                 horizontalAlignItems="center"
                 height="hug-contents"
                 width="hug-contents"
+                fill="#FFF"
                 padding={6}
                 spacing={0}
+                onClick={() => {
+                  setItem(items.filter(thing => thing.id != items[item].id))
+                }}
               >
                 <SVG 
                   src={deleteIcon}
-                  onClick={() => {
-                    setItem(items.filter(thing => thing.id != items[item].id))
-                  }}
                 ></SVG>
               </AutoLayout>
               <AutoLayout
@@ -518,8 +737,12 @@ const pauseIcon = `
                 horizontalAlignItems="center"
                 height="hug-contents"
                 width="hug-contents"
+                fill="#FFF"
                 padding={6}
                 spacing={0}
+                onClick={() => {
+                  openUI(__html__)
+                }}
               >
                 <SVG 
                   src={editIcon}
@@ -558,7 +781,9 @@ const pauseIcon = `
       }
     >
       {header}
+      {emptyState}
       <AutoLayout
+        hidden={items.length === 0}
         verticalAlignItems="start" 
         direction="vertical"
         width="fill-parent"

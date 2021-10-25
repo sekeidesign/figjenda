@@ -100,6 +100,11 @@
   <path d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"/>
 </svg>
 `;
+    const plusIcon = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#FFF" class="bi bi-plus-lg" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+  </svg>
+`;
     const header = /* @__PURE__ */ figma.widget.h(AutoLayout, {
       verticalAlignItems: "center",
       height: "hug-contents",
@@ -135,6 +140,11 @@
       horizontalAlignItems: "center",
       height: "hug-contents",
       width: "hug-contents",
+      fill: {
+        type: "solid",
+        color: "#FFF",
+        opacity: 0.01
+      },
       padding: 6,
       spacing: 0,
       onClick: () => {
@@ -205,6 +215,7 @@
       width: "hug-contents",
       padding: 12,
       cornerRadius: 999,
+      fill: "#FFF",
       stroke: {
         type: "solid",
         color: "#F24822"
@@ -245,6 +256,7 @@
       width: "hug-contents",
       padding: 12,
       cornerRadius: 999,
+      fill: "#FFF",
       stroke: {
         type: "solid",
         color: "#000",
@@ -259,6 +271,7 @@
       width: "hug-contents",
       padding: 12,
       cornerRadius: 999,
+      fill: "#FFF",
       stroke: {
         type: "solid",
         color: "#000",
@@ -268,6 +281,7 @@
       src: skipIcon
     }))));
     const addBtn = /* @__PURE__ */ figma.widget.h(AutoLayout, {
+      hidden: items.length === 0,
       verticalAlignItems: "center",
       height: "hug-contents",
       width: 368,
@@ -299,6 +313,191 @@
         opacity: 0.8
       }
     }, "Add Item"));
+    function emptyGraphic() {
+      const emojis = [{ id: 1, emoji: "\u{1F44B}" }, { id: 2, emoji: "\u{1F680}" }, { id: 3, emoji: "\u26A1\uFE0F" }];
+      let emojiCards = [];
+      for (let item of emojis) {
+        const emojiCard = /* @__PURE__ */ figma.widget.h(AutoLayout, {
+          key: item.id,
+          verticalAlignItems: "center",
+          horizontalAlignItems: "start",
+          height: "hug-contents",
+          width: 160,
+          padding: 4,
+          spacing: 4,
+          cornerRadius: 6,
+          fill: {
+            type: "solid",
+            color: "#FFF",
+            opacity: 0.9
+          },
+          effect: {
+            type: "drop-shadow",
+            color: {
+              r: 0.2,
+              g: 0.29,
+              b: 0.74,
+              a: 0.15
+            },
+            offset: { x: 0, y: 4 },
+            blur: 6
+          }
+        }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
+          padding: 8,
+          cornerRadius: 4,
+          fill: "#18A0FB"
+        }, /* @__PURE__ */ figma.widget.h(Text, {
+          width: "hug-contents",
+          height: "hug-contents",
+          fontSize: 12,
+          lineHeight: 12
+        }, item.emoji)), /* @__PURE__ */ figma.widget.h(AutoLayout, {
+          spacing: 4,
+          height: "hug-contents",
+          width: "hug-contents",
+          direction: "vertical"
+        }, /* @__PURE__ */ figma.widget.h(Frame, {
+          height: 4,
+          width: 40,
+          cornerRadius: 99,
+          fill: {
+            type: "solid",
+            color: "#18A0FB",
+            opacity: 0.5
+          }
+        }), /* @__PURE__ */ figma.widget.h(Frame, {
+          height: 4,
+          width: 96,
+          cornerRadius: 99,
+          fill: {
+            type: "solid",
+            color: "#18A0FB",
+            opacity: 0.15
+          }
+        })));
+        emojiCards.push(emojiCard);
+      }
+      return /* @__PURE__ */ figma.widget.h(AutoLayout, {
+        verticalAlignItems: "center",
+        horizontalAlignItems: "center",
+        overflow: "visible",
+        direction: "vertical",
+        height: "hug-contents",
+        width: "fill-parent",
+        padding: 0,
+        spacing: 8
+      }, emojiCards);
+    }
+    ;
+    const emptyState = /* @__PURE__ */ figma.widget.h(AutoLayout, {
+      hide: items.length > 0,
+      verticalAlignItems: "start",
+      horizontalAlignItems: "center",
+      direction: "vertical",
+      height: "hug-contents",
+      width: "fill-parent",
+      padding: {
+        top: 0,
+        right: 16,
+        left: 16,
+        bottom: 32
+      },
+      spacing: 16,
+      fill: "#FFF"
+    }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
+      width: "fill-parent",
+      height: 150,
+      verticalAlignItems: "center",
+      horizontalAlignItems: "center",
+      direction: "vertical"
+    }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
+      height: 1,
+      verticalAlignItems: "center",
+      horizontalAlignItems: "center",
+      overflow: "visible",
+      padding: {
+        bottom: 40,
+        top: 0,
+        left: 0,
+        right: 0
+      }
+    }, /* @__PURE__ */ figma.widget.h(Frame, {
+      width: 248,
+      height: 248,
+      cornerRadius: 999,
+      fill: {
+        type: "solid",
+        color: "#18A0FB",
+        opacity: 0.1
+      }
+    })), emptyGraphic()), /* @__PURE__ */ figma.widget.h(AutoLayout, {
+      verticalAlignItems: "center",
+      horizontalAlignItems: "center",
+      direction: "vertical",
+      height: "hug-contents",
+      width: "fill-parent",
+      padding: 0,
+      spacing: 8
+    }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
+      verticalAlignItems: "center",
+      horizontalAlignItems: "center",
+      direction: "vertical",
+      height: "hug-contents",
+      width: "hug-contents",
+      padding: 0,
+      spacing: 0
+    }, /* @__PURE__ */ figma.widget.h(Text, {
+      fontSize: 14,
+      lineHeight: 24,
+      fontWeight: 600,
+      fontFamily: "Inter",
+      width: "hug-contents",
+      fill: {
+        type: "solid",
+        color: "#000",
+        opacity: 0.8
+      }
+    }, "It's looking a little empty here"), /* @__PURE__ */ figma.widget.h(Text, {
+      fontSize: 11,
+      lineHeight: 16,
+      fontWeight: 400,
+      fontFamily: "Inter",
+      width: "hug-contents",
+      fill: {
+        type: "solid",
+        color: "#000",
+        opacity: 0.8
+      }
+    }, "Start by adding an agenda item \u{1F447}")), /* @__PURE__ */ figma.widget.h(AutoLayout, {
+      verticalAlignItems: "center",
+      horizontalAlignItems: "center",
+      height: "hug-contents",
+      width: "hug-contents",
+      padding: {
+        top: 4,
+        right: 16,
+        bottom: 4,
+        left: 12
+      },
+      spacing: 4,
+      fill: "#18A0FB",
+      cornerRadius: 6,
+      onClick: () => {
+        console.log("Add first item");
+      }
+    }, /* @__PURE__ */ figma.widget.h(SVG, {
+      src: plusIcon
+    }), /* @__PURE__ */ figma.widget.h(Text, {
+      fontSize: 14,
+      lineHeight: 24,
+      fontWeight: 400,
+      fontFamily: "Inter",
+      width: "hug-contents",
+      fill: {
+        type: "solid",
+        color: "#FFF"
+      }
+    }, "Add item"))));
     const truncateLength = 24;
     let timerList = [];
     for (let item in items) {
@@ -406,20 +605,25 @@
         horizontalAlignItems: "center",
         height: "hug-contents",
         width: "hug-contents",
+        fill: "#FFF",
         padding: 6,
-        spacing: 0
-      }, /* @__PURE__ */ figma.widget.h(SVG, {
-        src: deleteIcon,
+        spacing: 0,
         onClick: () => {
           setItem(items.filter((thing) => thing.id != items[item].id));
         }
+      }, /* @__PURE__ */ figma.widget.h(SVG, {
+        src: deleteIcon
       })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
         verticalAlignItems: "center",
         horizontalAlignItems: "center",
         height: "hug-contents",
         width: "hug-contents",
+        fill: "#FFF",
         padding: 6,
-        spacing: 0
+        spacing: 0,
+        onClick: () => {
+          openUI(__html__);
+        }
       }, /* @__PURE__ */ figma.widget.h(SVG, {
         src: editIcon
       }))));
@@ -448,7 +652,8 @@
         offset: { x: 0, y: 2 },
         blur: 8
       })
-    }, header, /* @__PURE__ */ figma.widget.h(AutoLayout, {
+    }, header, emptyState, /* @__PURE__ */ figma.widget.h(AutoLayout, {
+      hidden: items.length === 0,
       verticalAlignItems: "start",
       direction: "vertical",
       width: "fill-parent",
