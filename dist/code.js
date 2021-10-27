@@ -1,7 +1,7 @@
 (() => {
   // widget-src/code.jsx
   var { widget, ui, showUI } = figma;
-  var { AutoLayout, SVG, Text, Frame, useSyncedState } = widget;
+  var { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu } = widget;
   function timeConvert(num) {
     const minutes = Math.floor(num / 60);
     const paddedMins = minutes > 9 ? minutes : `0${minutes}`;
@@ -32,6 +32,30 @@
     const [isPlaying, togglePlay] = useSyncedState("isPlaying", false);
     const [isLocked, toggleLock] = useSyncedState("isLocked", false);
     const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
+    const [color, changeColor] = useSyncedState("color", "#9747FF");
+    const colorIcons = {
+      purple: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="12" y="12" width="28" height="28" rx="14" fill="#9747FF"/>
+          </svg>`,
+      gray: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="12" y="12" width="28" height="28" rx="14" fill="#545454"/>
+        </svg>`,
+      red: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="12" y="12" width="28" height="28" rx="14" fill="#E05A33"/>
+        </svg>`,
+      yellow: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="12" y="12" width="28" height="28" rx="14" fill="#F6C944"/>
+          </svg>`,
+      green: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="12" y="12" width="28" height="28" rx="14" fill="#4DA660"/>
+          </svg>`,
+      blue: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="12" y="12" width="28" height="28" rx="14" fill="#739AF0"/>
+        </svg>`,
+      orange: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="12" y="12" width="28" height="28" rx="14" fill="#C6803E"/>
+          </svg>`
+    };
     const timeIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="rgba(0, 0, 0, .3)" viewBox="0 0 16 16">
   <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
@@ -105,6 +129,52 @@
     <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
   </svg>
 `;
+    usePropertyMenu([
+      {
+        tooltip: "Purple",
+        propertyName: "#9747FF",
+        itemType: "action",
+        icon: colorIcons.purple
+      },
+      {
+        tooltip: "Gray",
+        propertyName: "#545454",
+        itemType: "action",
+        icon: colorIcons.gray
+      },
+      {
+        tooltip: "Red",
+        propertyName: "#E05A33",
+        itemType: "action",
+        icon: colorIcons.red
+      },
+      {
+        tooltip: "Yellow",
+        propertyName: "#F6C944",
+        itemType: "action",
+        icon: colorIcons.yellow
+      },
+      {
+        tooltip: "Green",
+        propertyName: "#4DA660",
+        itemType: "action",
+        icon: colorIcons.green
+      },
+      {
+        tooltip: "Blue",
+        propertyName: "#739AF0",
+        itemType: "action",
+        icon: colorIcons.blue
+      },
+      {
+        tooltip: "Orange",
+        propertyName: "#C6803E",
+        itemType: "action",
+        icon: colorIcons.orange
+      }
+    ], (e) => {
+      changeColor(e.propertyName);
+    });
     const header = /* @__PURE__ */ figma.widget.h(AutoLayout, {
       verticalAlignItems: "center",
       height: "hug-contents",
@@ -116,7 +186,7 @@
         bottom: 6
       },
       spacing: "auto",
-      fill: "#4DA660"
+      fill: color
     }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
       verticalAlignItems: "center",
       height: "hug-contents",
@@ -142,8 +212,7 @@
       width: "hug-contents",
       fill: {
         type: "solid",
-        color: "#FFF",
-        opacity: 0.01
+        color: `${color}`
       },
       padding: 6,
       spacing: 0,
