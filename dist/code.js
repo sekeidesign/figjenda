@@ -32,7 +32,7 @@
     const [isPlaying, togglePlay] = useSyncedState("isPlaying", false);
     const [isLocked, toggleLock] = useSyncedState("isLocked", false);
     const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
-    const [color, changeColor] = useSyncedState("color", "#9747FF");
+    const [themeColor, changeColor] = useSyncedState("themeColor", "#9747FF");
     const colorIcons = {
       purple: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="12" y="12" width="28" height="28" rx="14" fill="#9747FF"/>
@@ -186,7 +186,7 @@
         bottom: 6
       },
       spacing: "auto",
-      fill: color
+      fill: themeColor
     }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
       verticalAlignItems: "center",
       height: "hug-contents",
@@ -212,7 +212,7 @@
       width: "hug-contents",
       fill: {
         type: "solid",
-        color: `${color}`
+        color: `${themeColor}`
       },
       padding: 6,
       spacing: 0,
@@ -414,7 +414,7 @@
         }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
           padding: 8,
           cornerRadius: 4,
-          fill: "#18A0FB"
+          fill: themeColor
         }, /* @__PURE__ */ figma.widget.h(Text, {
           width: "hug-contents",
           height: "hug-contents",
@@ -431,7 +431,7 @@
           cornerRadius: 99,
           fill: {
             type: "solid",
-            color: "#18A0FB",
+            color: `${themeColor}`,
             opacity: 0.5
           }
         }), /* @__PURE__ */ figma.widget.h(Frame, {
@@ -440,7 +440,7 @@
           cornerRadius: 99,
           fill: {
             type: "solid",
-            color: "#18A0FB",
+            color: `${themeColor}`,
             opacity: 0.15
           }
         })));
@@ -496,7 +496,7 @@
       cornerRadius: 999,
       fill: {
         type: "solid",
-        color: "#18A0FB",
+        color: `${themeColor}`,
         opacity: 0.1
       }
     })), emptyGraphic()), /* @__PURE__ */ figma.widget.h(AutoLayout, {
@@ -549,7 +549,7 @@
         left: 12
       },
       spacing: 4,
-      fill: "#18A0FB",
+      fill: themeColor,
       cornerRadius: 6,
       onClick: () => {
         console.log("Add first item");

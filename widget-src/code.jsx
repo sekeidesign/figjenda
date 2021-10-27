@@ -49,7 +49,7 @@ function FigJenda() {
   const [isPlaying, togglePlay] = useSyncedState('isPlaying', false)
   const [isLocked, toggleLock] = useSyncedState('isLocked', false)
   const [isAutoPlay, toggleAutoPlay] = useSyncedState('isAutoPlay', true)
-  const [color, changeColor] = useSyncedState('color', "#9747FF")
+  const [themeColor, changeColor] = useSyncedState('themeColor', "#9747FF")
 
 // ---- ICONS ----------------
 const colorIcons = {
@@ -214,7 +214,7 @@ usePropertyMenu(
         bottom: 6
       }}
       spacing="auto"
-      fill={color}
+      fill={themeColor}
     >
       <AutoLayout
         verticalAlignItems="center"
@@ -249,7 +249,7 @@ usePropertyMenu(
         width="hug-contents"
         fill={{
           type: 'solid',
-          color: `${color}`
+          color: `${themeColor}`
         }}
         padding={6}
         spacing={0}
@@ -473,7 +473,7 @@ usePropertyMenu(
           cornerRadius={6}
           fill={{
             type: 'solid',
-            color: '#FFF',
+            color: "#FFF",
             opacity: .9
           }}
           effect={{
@@ -491,7 +491,7 @@ usePropertyMenu(
           <AutoLayout
             padding={8}
             cornerRadius={4}
-            fill="#18A0FB"
+            fill={themeColor}
           >
             <Text width="hug-contents" height="hug-contents" fontSize={12} lineHeight={12}>{item.emoji}</Text>
           </AutoLayout>
@@ -507,7 +507,7 @@ usePropertyMenu(
               cornerRadius={99}
               fill={{
                 type: "solid",
-                color: "#18A0FB",
+                color: `${themeColor}`,
                 opacity: .5
               }}
             ></Frame>
@@ -517,7 +517,7 @@ usePropertyMenu(
               cornerRadius={99}
               fill={{
                 type: "solid",
-                color: "#18A0FB",
+                color: `${themeColor}`,
                 opacity: .15
               }}
             ></Frame>
@@ -584,7 +584,7 @@ usePropertyMenu(
             cornerRadius={999}
             fill={{
               type: 'solid',
-              color: '#18A0FB',
+              color: `${themeColor}`,
               opacity: .1
             }}
           ></Frame>
@@ -646,7 +646,7 @@ usePropertyMenu(
             left: 12
           }}
           spacing={4}
-          fill="#18A0FB"
+          fill={themeColor}
           cornerRadius={6}
           onClick={() => {
             console.log("Add first item")
