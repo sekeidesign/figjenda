@@ -475,7 +475,7 @@
       fill: "#FFF"
     }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
       width: "fill-parent",
-      height: 150,
+      height: 180,
       verticalAlignItems: "center",
       horizontalAlignItems: "center",
       direction: "vertical"
