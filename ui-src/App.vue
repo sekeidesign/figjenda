@@ -2,5 +2,5 @@
 </script>
 
 <template>
-    <div>Hello World</div>
+    <div>Hello poop</div>
 </template>
