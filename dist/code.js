@@ -175,7 +175,9 @@
     width: 368,
     padding: 12,
     spacing: 10,
-    onClick: () => openUI("add")
+    onClick: () => {
+      openUI("add");
+    }
   }, /* @__PURE__ */ figma.widget.h(Text, {
     fontSize: 14,
     lineHeight: 24,
