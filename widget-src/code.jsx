@@ -248,9 +248,7 @@ const addBtn = (
     width={368}
     padding={12}
     spacing={10}
-    onClick={() => {
-      openUI('add')
-    }}
+    onClick={() => openUI('add')}
   >
     <Text
       fontSize={14}
