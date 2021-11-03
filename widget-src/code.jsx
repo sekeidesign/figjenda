@@ -38,12 +38,6 @@ function FigJenda() {
           name: "Intros",
           emoji: "👋",
           time: 300
-      },
-      {
-          id: 2,
-          name: "Sailboat Exercise",
-          emoji: "⛵️",
-          time: 1800
       }
   ]);
   const [isPlaying, togglePlay] = useSyncedState('isPlaying', false)
