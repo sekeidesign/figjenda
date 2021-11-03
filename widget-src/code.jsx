@@ -17,6 +17,7 @@ function openUI(
   options = { height: 300 }
 ) {
   return new Promise((resolve) => {
+    console.log("Hey")
     showUI(__html__, options);
 
     // const data = { intent, sound };
@@ -417,9 +418,7 @@ usePropertyMenu(
       padding={12}
       spacing={10}
       fill="#FFF"
-      onClick={() => {
-        openUI('add')
-      }}
+      onClick={() => openUI('add')}
     >
       <Text
         fontSize={14}
@@ -809,9 +808,7 @@ usePropertyMenu(
                 fill="#FFF"
                 padding={6}
                 spacing={0}
-                onClick={() => {
-                  openUI(__html__)
-                }}
+                onClick={() => openUI('add')}
               >
                 <SVG 
                   src={editIcon}

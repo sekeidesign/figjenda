@@ -11,6 +11,7 @@
   }
   function openUI(payload, options = { height: 300 }) {
     return new Promise((resolve) => {
+      console.log("Hey");
       showUI(__html__, options);
     });
   }
@@ -21,12 +22,6 @@
         name: "Intros",
         emoji: "\u{1F44B}",
         time: 300
-      },
-      {
-        id: 2,
-        name: "Sailboat Exercise",
-        emoji: "\u26F5\uFE0F",
-        time: 1800
       }
     ]);
     const [isPlaying, togglePlay] = useSyncedState("isPlaying", false);
@@ -357,9 +352,7 @@
       padding: 12,
       spacing: 10,
       fill: "#FFF",
-      onClick: () => {
-        openUI("add");
-      }
+      onClick: () => openUI("add")
     }, /* @__PURE__ */ figma.widget.h(Text, {
       fontSize: 14,
       lineHeight: 24,
@@ -690,9 +683,7 @@
         fill: "#FFF",
         padding: 6,
         spacing: 0,
-        onClick: () => {
-          openUI(__html__);
-        }
+        onClick: () => openUI("add")
       }, /* @__PURE__ */ figma.widget.h(SVG, {
         src: editIcon
       }))));
