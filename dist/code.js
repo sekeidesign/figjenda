@@ -9,7 +9,7 @@
     const paddedSecs = seconds > 9 ? seconds : `0${seconds}`;
     return paddedMins + ":" + paddedSecs;
   }
-  function openUI(payload, options = { height: 300 }) {
+  function openUI(payload, options = { height: 300, width: 332 }) {
     return new Promise((resolve) => {
       console.log("Hey");
       showUI(__html__, options);

@@ -14,7 +14,7 @@ function timeConvert(num)
 
 function openUI(
   payload,
-  options = { height: 300 }
+  options = { height: 300, width: 332 }
 ) {
   return new Promise((resolve) => {
     console.log("Hey")
