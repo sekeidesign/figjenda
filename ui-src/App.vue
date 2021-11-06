@@ -1,21 +1,125 @@
 <script setup>
-import emojiSet from './emoji.json'
-import { ref, computed } from 'vue';
+    import { ref, computed } from 'vue';
+    import emojiSet from './emoji.json'
+    const id = ref(2)
     const emojis = Object.keys(emojiSet)
     const selectedEmoji = ref('')
     const itemName = ref('')
+    const minutes = ref()
+    const seconds = ref()
+
+    const secsInput = ref(null)
+    const minsInput = ref(null)
+    const nameInput = ref(null)
+
+    const nums = [
+        '0',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9'
+    ]
+
+    const isValid = computed(() => {
+        return selectedEmoji.value && itemName.value && (minutes.value || minutes.value === 0) && (seconds.value || seconds.value === 0)
+    })
 
     function removeEmoji() {
         selectedEmoji.value = ''
     }
     function setEmoji(emoji) {
-        console.log(emoji)
         selectedEmoji.value = emoji
+        nameInput.value.focus()
+    }
+    function handleMins(){
+        switch (true) {
+            case (minutes.value < 0): 
+                minutes.value = Math.abs(minutes.value);
+                break;
+            case (minutes.value > 99 || minutes.value < -99): 
+                minutes.value = 99;
+                break;
+        }
+    }
+    function keydownMins(input, e){
+        const illegal = [
+            "-",
+            "+",
+            "e"
+        ]
+        if (illegal.includes(e.key) || (minutes.value === undefined && e.key === "0") || (nums.includes(e.key) && input.toString().length === 2)){
+            e.preventDefault()
+        }
+    }
+    function keydownSecs(input, e){
+        const illegal = [
+            "-",
+            "+",
+            "e"
+        ]
+        if (e.key === "Enter"){
+            secsInput.value.blur()
+        } else if (illegal.includes(e.key) || (nums.includes(e.key) && input.toString().length === 2)){
+            e.preventDefault()
+        }
+    }
+     function focusMins(e){
+         if (e.key === "Enter") {
+             minsInput.value.focus()
+        }
+    }
+    function handleSecs(){
+        if (seconds.value >= 60) {
+            minutes.value = Math.floor(seconds.value/60)
+            seconds.value = seconds.value % 60
+        } else if (seconds.value === undefined) {
+            seconds.value = 0
+        } else {
+            seconds.value = seconds.value % 60
+        }
+    }
+    function focusSecs(e){
+        if (e.key === "Enter" || (nums.includes(e.key) && minutes.value.toString().length === 2)){
+            secsInput.value.focus()
+        }
+    }
+    function addItem(){
+        const obj = {
+          id: id.value,
+          name: itemName.value,
+          emoji: selectedEmoji.value,
+          minutes: minutes.value,
+          seconds: seconds.value 
+        }
+        dispatch('add', obj)
     }
 </script>
+<script>
+    const eventListeners = [];
+    export const dispatch = (action, data) => {
+        parent.postMessage({ pluginMessage: { action, data } }, '*');
+    };
+    export const handleEvent = () => {
+        eventListeners.push({ type, callback });
+    };
+    window.onmessage = event => {
+        const message = event.data.pluginMessage;
+        if (message) {
+            for (let eventListener of eventListeners) {
+                if (message.action === eventListener.type) eventListener.callback(message.data);
+            }
+        }
+    };  
+</script>
+    
 
 <template>
-    <div style="padding: 0px; position: relative;">
+    <div style="padding: 0px; position: relative; display: flex; flex-direction: column; height: 300px;">
         <div class="header">
             <div class="section-title-input">
                 <button class="emoji-input" @click.prevent="removeEmoji">
@@ -25,7 +129,14 @@ import { ref, computed } from 'vue';
                     </svg>
                     <div v-else class="selected-emoji">{{selectedEmoji}}</div>
                 </button>
-                <input type="text" placeholder="Section title" class="input" v-bind="itemName">
+                <input 
+                    type="text" 
+                    placeholder="Section title" 
+                    class="input" 
+                    ref="nameInput"
+                    v-model="itemName" 
+                    @keyup="focusMins"
+                >
             </div>
             <div class="time-wrap">
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="rgba(0, 0, 0, 0.3)" class="bi bi-clock" viewBox="0 0 16 16">
@@ -33,9 +144,24 @@ import { ref, computed } from 'vue';
                     <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
                 </svg>
                 <div class="input time">
-                    <input type="number" min="0" placeholder="00">
+                    <input 
+                        type="number"
+                        ref="minsInput" 
+                        placeholder="00" 
+                        v-model="minutes" 
+                        @blur="handleMins" 
+                        @keyup="focusSecs" 
+                        @keydown="keydownMins(minutes, $event)"
+                    >
                     :
-                    <input type="number" min="0" max="60" placeholder="00">
+                    <input 
+                        type="number" 
+                        ref="secsInput" 
+                        placeholder="00" 
+                        v-model="seconds" 
+                        @blur="handleSecs" 
+                        @keydown="keydownSecs(seconds, $event)"
+                    >
                 </div>
             </div>  
         </div>
@@ -43,6 +169,10 @@ import { ref, computed } from 'vue';
             <div class="emoji-list">
                 <button class="emoji-btn" :class="[emoji === selectedEmoji ? 'is-selected' : '']" v-for="emoji in emojis" :key="emoji.slug" @click="setEmoji(emoji)">{{emoji}}</button>
             </div>
+        </div>
+        <div class="actions">
+            <button class="primary-btn destructive" @click="dispatch('close')">Cancel</button>
+            <button class="primary-btn" @click="addItem" :disabled="!isValid">Add</button>
         </div>
     </div>
 </template>
@@ -58,9 +188,15 @@ import { ref, computed } from 'vue';
 
     /* Firefox */
     input[type=number] {
-        border: none;
-        width: 20px;
+        border: 1px solid transparent;
+        width: 21px;
+        font-size: 14px;
         -moz-appearance: textfield;
+        &:focus-visible {
+            border-radius: 2px;
+            border: 1px solid rgba(24, 160, 251, 1);
+            outline: transparent !important;
+        }
     }
     
     .header {
@@ -70,6 +206,7 @@ import { ref, computed } from 'vue';
         box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05), 0px 5px 16px rgba(0, 0, 0, 0.1);
         display: flex;
         align-items: center;
+        flex-shrink: 0;
     }
     .section-title-input {
         position: relative;
@@ -120,8 +257,17 @@ import { ref, computed } from 'vue';
     }
     .time {
         padding-left: 24px;
+        font-size: 14px;
         display: flex;
         align-items: center;
+        &:hover {
+            border: 1px solid transparent;
+        }
+        &:focus-visible {
+            border-radius: 2px;
+            border: 1px solid transparent;
+            outline: transparent !important;
+        }
     }
     .bi-clock {
         position: absolute;
@@ -129,7 +275,7 @@ import { ref, computed } from 'vue';
         top: 10px;
     }
     .emoji-list-wrap {
-        height: 144px;
+        flex-grow: 1;
         overflow-y: scroll;
         width: 100%;
     }
@@ -166,12 +312,44 @@ import { ref, computed } from 'vue';
     .selected-emoji {
         width: 16px;
         height: 16px;
-        font-size: 14px;
+        font-size: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
         line-height: 14px;
         color: rgba(0, 0, 0, 1);
         inset: 0px;
+    }
+    .actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        gap: 8px;
+        flex-shrink: 0;
+        border-top: 1px solid #F0F0F0;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05), 0px 5px 16px rgba(0, 0, 0, 0.1);
+    }
+    .primary-btn {
+        flex-basis: 0;
+        flex-grow: 1;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        line-height: 24px;
+        padding: 4px;
+        font-weight: 500;
+        background-color: rgba(24, 160, 251, 1);
+        color: white;
+        &:disabled {
+            background-color: rgba(0, 0, 0, 0.3);
+            cursor: not-allowed;
+        }
+    }
+    .destructive {
+        background-color: transparent;
+        border: 1px solid rgba(242, 72, 34, 1);
+        color: rgba(242, 72, 34, 1);
     }
 </style>

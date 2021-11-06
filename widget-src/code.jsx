@@ -1,15 +1,26 @@
-const { widget, ui, showUI } = figma
-const { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu } = widget;
+//import { useEffect } from "react";
+
+const { widget, ui, showUI, closePlugin } = figma
+const { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu, useEffect } = widget;
+const eventListeners = [];
+
+export const dispatch = (action, data) => {
+	ui.postMessage({ action, data });
+};
+export const handleEvent = (type, callback) => {
+	eventListeners.push({ type, callback });
+};
+ui.onmessage = message => {
+	for (let eventListener of eventListeners) {
+		if (message.action === eventListener.type) eventListener.callback(message.data);
+	}
+};
 
 
 // ---- FUNCTIONS ----------------
-function timeConvert(num)
-{ 
-  const minutes = Math.floor(num / 60);  
-  const paddedMins = minutes > 9 ? minutes : `0${minutes}`
-  const seconds = num % 60;
-  const paddedSecs = seconds > 9 ? seconds : `0${seconds}`
-  return paddedMins + ":" + paddedSecs;         
+function zeroPad(num){ 
+  const paddedNum = num > 9 ? num : `0${num}`
+  return paddedNum;         
 }
 
 function openUI(
@@ -32,13 +43,21 @@ function openUI(
 // ---- WIDGET ----------------
 function FigJenda() {
 
+    handleEvent('close', () => {figma.closePlugin()});
+    handleEvent('add', (data) => {
+      setItem(items.push(data))
+      console.log(items)
+      figma.closePlugin()
+    })
+  
   // ---- STATE ----------------
   const [items, setItem] = useSyncedState('items', [
       {
           id: 1,
           name: "Intros",
           emoji: "👋",
-          time: 300
+          minutes: 5,
+          seconds: 30
       }
   ]);
   const [isPlaying, togglePlay] = useSyncedState('isPlaying', false)
@@ -195,7 +214,6 @@ usePropertyMenu(
     changeColor(e.propertyName)
   }
 )
-
   // ---- COMPONENTS ----------------
   const header = (
     <AutoLayout
@@ -732,7 +750,7 @@ usePropertyMenu(
                   opacity: .8
                 }}
               >
-                {timeConvert(items[item].time)}
+                {zeroPad(items[item].minutes) + ':' + zeroPad(items[item].seconds)}
               </Text>
             </AutoLayout>
             <Frame height={12} width={1} cornerRadius={99} fill={{

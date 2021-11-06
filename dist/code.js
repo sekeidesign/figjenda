@@ -1,13 +1,23 @@
 (() => {
   // widget-src/code.jsx
-  var { widget, ui, showUI } = figma;
-  var { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu } = widget;
-  function timeConvert(num) {
-    const minutes = Math.floor(num / 60);
-    const paddedMins = minutes > 9 ? minutes : `0${minutes}`;
-    const seconds = num % 60;
-    const paddedSecs = seconds > 9 ? seconds : `0${seconds}`;
-    return paddedMins + ":" + paddedSecs;
+  var { widget, ui, showUI, closePlugin } = figma;
+  var { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu, useEffect } = widget;
+  var eventListeners = [];
+  var dispatch = (action, data) => {
+    ui.postMessage({ action, data });
+  };
+  var handleEvent = (type, callback) => {
+    eventListeners.push({ type, callback });
+  };
+  ui.onmessage = (message) => {
+    for (let eventListener of eventListeners) {
+      if (message.action === eventListener.type)
+        eventListener.callback(message.data);
+    }
+  };
+  function zeroPad(num) {
+    const paddedNum = num > 9 ? num : `0${num}`;
+    return paddedNum;
   }
   function openUI(payload, options = { height: 300, width: 332 }) {
     return new Promise((resolve) => {
@@ -16,12 +26,21 @@
     });
   }
   function FigJenda() {
+    handleEvent("close", () => {
+      figma.closePlugin();
+    });
+    handleEvent("add", (data) => {
+      setItem(items.push(data));
+      console.log(items);
+      figma.closePlugin();
+    });
     const [items, setItem] = useSyncedState("items", [
       {
         id: 1,
         name: "Intros",
         emoji: "\u{1F44B}",
-        time: 300
+        minutes: 5,
+        seconds: 30
       }
     ]);
     const [isPlaying, togglePlay] = useSyncedState("isPlaying", false);
@@ -619,7 +638,7 @@
           color: "#000",
           opacity: 0.8
         }
-      }, timeConvert(items[item].time))), /* @__PURE__ */ figma.widget.h(Frame, {
+      }, zeroPad(items[item].minutes) + ":" + zeroPad(items[item].seconds))), /* @__PURE__ */ figma.widget.h(Frame, {
         height: 12,
         width: 1,
         cornerRadius: 99,
