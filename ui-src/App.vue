@@ -1,8 +1,12 @@
 <script setup>
     import { ref, computed } from 'vue';
     import emojiSet from './emoji.json'
-    const id = ref(2)
-    const emojis = Object.keys(emojiSet)
+    Object.filter = (obj, predicate) => 
+    Object.keys(obj)
+          .filter( key => predicate(obj[key]) )
+          .reduce( (res, key) => (res[key] = obj[key], res), {} );
+    const emoji3 = Object.filter(emojiSet, emoji => parseInt(emoji["emoji_version"], 10) < 3.1)
+    const emojis = Object.keys(emoji3)
     const selectedEmoji = ref('')
     const itemName = ref('')
     const minutes = ref()
@@ -90,7 +94,7 @@
     }
     function addItem(){
         const obj = {
-          id: id.value,
+          id: null,
           name: itemName.value,
           emoji: selectedEmoji.value,
           minutes: minutes.value,

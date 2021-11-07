@@ -19,21 +19,7 @@
     const paddedNum = num > 9 ? num : `0${num}`;
     return paddedNum;
   }
-  function openUI(payload, options = { height: 300, width: 332 }) {
-    return new Promise((resolve) => {
-      console.log("Hey");
-      showUI(__html__, options);
-    });
-  }
   function FigJenda() {
-    handleEvent("close", () => {
-      figma.closePlugin();
-    });
-    handleEvent("add", (data) => {
-      setItem(items.push(data));
-      console.log(items);
-      figma.closePlugin();
-    });
     const [items, setItem] = useSyncedState("items", [
       {
         id: 1,
@@ -47,6 +33,22 @@
     const [isLocked, toggleLock] = useSyncedState("isLocked", false);
     const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
     const [themeColor, changeColor] = useSyncedState("themeColor", "#9747FF");
+    function openUI(payload, options = { height: 300, width: 332 }) {
+      return new Promise((resolve) => {
+        showUI(__html__, options);
+        handleEvent("close", () => {
+          figma.closePlugin();
+        });
+        handleEvent("add", (data) => {
+          const lastIndex = items.length - 1;
+          data.id = items[lastIndex].id + 1;
+          let updatedItems = items;
+          updatedItems.push(data);
+          setItem(updatedItems);
+          figma.closePlugin();
+        });
+      });
+    }
     const colorIcons = {
       purple: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="12" y="12" width="28" height="28" rx="14" fill="#9747FF"/>
@@ -564,7 +566,7 @@
       fill: themeColor,
       cornerRadius: 6,
       onClick: () => {
-        console.log("Add first item");
+        console.log(items);
       }
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: plusIcon

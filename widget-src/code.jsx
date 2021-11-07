@@ -23,32 +23,8 @@ function zeroPad(num){
   return paddedNum;         
 }
 
-function openUI(
-  payload,
-  options = { height: 300, width: 332 }
-) {
-  return new Promise((resolve) => {
-    console.log("Hey")
-    showUI(__html__, options);
-
-    // const data = { intent, sound };
-    // ui.postMessage(data);
-
-    // ui.once("message", () => {
-    //   resolve();
-    // });
-  });
-}
-
 // ---- WIDGET ----------------
 function FigJenda() {
-
-    handleEvent('close', () => {figma.closePlugin()});
-    handleEvent('add', (data) => {
-      setItem(items.push(data))
-      console.log(items)
-      figma.closePlugin()
-    })
   
   // ---- STATE ----------------
   const [items, setItem] = useSyncedState('items', [
@@ -64,6 +40,35 @@ function FigJenda() {
   const [isLocked, toggleLock] = useSyncedState('isLocked', false)
   const [isAutoPlay, toggleAutoPlay] = useSyncedState('isAutoPlay', true)
   const [themeColor, changeColor] = useSyncedState('themeColor', "#9747FF")
+
+  function openUI(
+    payload,
+    options = { height: 300, width: 332 }
+  ) {
+    return new Promise((resolve) => {
+      showUI(__html__, options);
+  
+      handleEvent('close', () => {
+        figma.closePlugin()
+      });
+  
+      handleEvent('add', (data) => {
+        const lastIndex = items.length - 1
+        data.id = items[lastIndex].id + 1
+        let updatedItems = items
+        updatedItems.push(data)
+        setItem(updatedItems)
+        figma.closePlugin()
+      })
+  
+      // const data = { intent, sound };
+      // ui.postMessage(data);
+  
+      // ui.once("message", () => {
+      //   resolve();
+      // });
+    });
+  }
 
 // ---- ICONS ----------------
 const colorIcons = {
@@ -660,7 +665,7 @@ usePropertyMenu(
           fill={themeColor}
           cornerRadius={6}
           onClick={() => {
-            console.log("Add first item")
+            console.log(items)
           }}
         >
           <SVG src={plusIcon}></SVG>
