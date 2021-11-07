@@ -1,6 +1,6 @@
 (() => {
   // widget-src/code.jsx
-  var { widget, ui, showUI, closePlugin } = figma;
+  var { widget, ui, showUI, closePlugin, timer } = figma;
   var { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu, useEffect } = widget;
   var eventListeners = [];
   var dispatch = (action, data) => {
@@ -41,13 +41,31 @@
         });
         handleEvent("add", (data) => {
           const lastIndex = items.length - 1;
-          data.id = items[lastIndex].id + 1;
+          data.id = items[lastIndex] ? items[lastIndex].id + 1 : 1;
           let updatedItems = items;
           updatedItems.push(data);
           setItem(updatedItems);
           figma.closePlugin();
         });
       });
+    }
+    function toTime(mins, secs) {
+      return mins * 60 + secs;
+    }
+    function syncTimer(time) {
+      setTimeout(() => {
+        console.log("timer done");
+        timer.remaining === 0 ? console.log("Next") : syncTimer(timer.remaining * 1e3);
+      }, time);
+    }
+    const localTimer = setTimeout(() => {
+      console.log("timer done");
+    }, 1e3);
+    function play(mins, secs) {
+      console.log("Played");
+      setTimeout(() => {
+        console.log("PLEASE WORK");
+      }, 1e3);
     }
     const colorIcons = {
       purple: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -244,13 +262,7 @@
       width: "fill-parent",
       padding: 12,
       spacing: "auto",
-      fill: "#fff",
-      effect: {
-        type: "inner-shadow",
-        color: "#E5E5E5",
-        offset: { x: 0, y: 1 },
-        blur: 0
-      }
+      fill: "#fff"
     }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
       verticalAlignItems: "center",
       height: "hug-contents",
@@ -330,7 +342,7 @@
       cornerRadius: 999,
       fill: "#18A0FB",
       onClick: () => {
-        togglePlay(!isPlaying);
+        play(items[0].minutes, items[0].seconds);
       }
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: isPlaying ? pauseIcon : playIcon
@@ -366,13 +378,19 @@
       src: skipIcon
     }))));
     const addBtn = /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: items.length === 0,
+      hidden: items.length === 0 || isLocked,
       verticalAlignItems: "center",
       height: "hug-contents",
       width: 368,
       padding: 12,
       spacing: 10,
       fill: "#FFF",
+      effect: {
+        type: "inner-shadow",
+        color: "#E5E5E5",
+        offset: { x: 0, y: -1 },
+        blur: 0
+      },
       onClick: () => openUI("add")
     }, /* @__PURE__ */ figma.widget.h(Text, {
       fontSize: 14,
@@ -565,9 +583,7 @@
       spacing: 4,
       fill: themeColor,
       cornerRadius: 6,
-      onClick: () => {
-        console.log(items);
-      }
+      onClick: () => openUI("add")
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: plusIcon
     }), /* @__PURE__ */ figma.widget.h(Text, {
@@ -704,7 +720,7 @@
         fill: "#FFF",
         padding: 6,
         spacing: 0,
-        onClick: () => openUI("add")
+        onClick: () => openUI("edit")
       }, /* @__PURE__ */ figma.widget.h(SVG, {
         src: editIcon
       }))));

@@ -1,6 +1,6 @@
 //import { useEffect } from "react";
 
-const { widget, ui, showUI, closePlugin } = figma
+const { widget, ui, showUI, closePlugin, timer } = figma
 const { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu, useEffect } = widget;
 const eventListeners = [];
 
@@ -54,7 +54,7 @@ function FigJenda() {
   
       handleEvent('add', (data) => {
         const lastIndex = items.length - 1
-        data.id = items[lastIndex].id + 1
+        data.id = items[lastIndex] ? items[lastIndex].id + 1 : 1
         let updatedItems = items
         updatedItems.push(data)
         setItem(updatedItems)
@@ -68,6 +68,67 @@ function FigJenda() {
       //   resolve();
       // });
     });
+  }
+
+  // var LocalTimer = function(callback, delay) {
+  //   var timerId, start, remaining = delay;
+
+  //   this.pause = function() {
+  //       window.clearTimeout(timerId);
+  //       remaining -= Date.now() - start;
+  //   };
+
+  //   this.resume = function() {
+  //       start = Date.now();
+  //       window.clearTimeout(timerId);
+  //       timerId = window.setTimeout(callback, remaining);
+  //   };
+
+  //   this.resume();
+  // };
+  
+  function toTime(mins, secs){
+    return (mins * 60) + secs;
+  }
+
+  function syncTimer(time) {
+    setTimeout(() => {
+      console.log('timer done')
+      timer.remaining === 0 ? console.log('Next') : syncTimer(timer.remaining * 1000)
+    }, time)
+  }
+
+
+  const localTimer = setTimeout(() => {
+    console.log('timer done')
+  }, 1000)
+
+  function play(mins, secs) {
+    console.log('Played')
+    setTimeout(() => {
+      console.log('PLEASE WORK')
+    }, 1000)
+    // switch (timer.state) {
+    //   case "STOPPED": 
+    //     togglePlay(true)
+    //     //syncTimer(toTime(mins, secs) * 1000)
+    //     timer.start(toTime(mins, secs));
+    //     setTimeout(() => {
+    //       console.log('timer done')
+    //     }, 1000)
+    //     break;
+    //   case "RUNNING":
+    //     togglePlay(false)
+    //     timer.pause()
+    //     break;
+    //   case "PAUSED":
+    //     togglePlay(true)
+    //     setTimeout(() => {
+    //       console.log('timer done')
+    //     }, 10000)
+    //     timer.start(timer.remaining)
+    //     break;
+    // }
   }
 
 // ---- ICONS ----------------
@@ -290,12 +351,6 @@ usePropertyMenu(
       padding={12}
       spacing="auto"
       fill="#fff"
-      effect={{
-        type: 'inner-shadow',
-        color: '#E5E5E5',
-        offset: {x: 0, y: 1},
-        blur: 0
-      }}
     >
       <AutoLayout
         verticalAlignItems="center"
@@ -391,7 +446,7 @@ usePropertyMenu(
           cornerRadius={999}
           fill="#18A0FB"
           onClick={() => {
-            togglePlay(!isPlaying)
+            play(items[0].minutes, items[0].seconds)
           }}
         >
           <SVG src={isPlaying ? pauseIcon : playIcon}></SVG>
@@ -434,13 +489,19 @@ usePropertyMenu(
   
   const addBtn = (
     <AutoLayout
-      hidden={items.length === 0}
+      hidden={items.length === 0 || isLocked}
       verticalAlignItems="center"
       height="hug-contents"
       width={368}
       padding={12}
       spacing={10}
       fill="#FFF"
+      effect={{
+        type: 'inner-shadow',
+        color: '#E5E5E5',
+        offset: {x: 0, y: -1},
+        blur: 0
+      }}
       onClick={() => openUI('add')}
     >
       <Text
@@ -664,9 +725,7 @@ usePropertyMenu(
           spacing={4}
           fill={themeColor}
           cornerRadius={6}
-          onClick={() => {
-            console.log(items)
-          }}
+          onClick={() => openUI('add')}
         >
           <SVG src={plusIcon}></SVG>
           <Text
@@ -831,7 +890,7 @@ usePropertyMenu(
                 fill="#FFF"
                 padding={6}
                 spacing={0}
-                onClick={() => openUI('add')}
+                onClick={() => openUI('edit')}
               >
                 <SVG 
                   src={editIcon}

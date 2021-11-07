@@ -1,3 +1,21 @@
+<script>
+    const eventListeners = [];
+    export const dispatch = (action, data) => {
+        parent.postMessage({ pluginMessage: { action, data } }, '*');
+    };
+    export const handleEvent = (type, callback) => {
+        eventListeners.push({ type, callback });
+    };
+    window.onmessage = event => {
+        const message = event.data.pluginMessage;
+        if (message) {
+            for (let eventListener of eventListeners) {
+                if (message.action === eventListener.type) eventListener.callback(message.data);
+            }
+        }
+    };  
+</script>
+
 <script setup>
     import { ref, computed } from 'vue';
     import emojiSet from './emoji.json'
@@ -5,8 +23,9 @@
     Object.keys(obj)
           .filter( key => predicate(obj[key]) )
           .reduce( (res, key) => (res[key] = obj[key], res), {} );
-    const emoji3 = Object.filter(emojiSet, emoji => parseInt(emoji["emoji_version"], 10) < 3.1)
+    const emoji3 = Object.filter(emojiSet, emoji => parseInt(emoji["emoji_version"], 10) <= 3)
     const emojis = Object.keys(emoji3)
+
     const selectedEmoji = ref('')
     const itemName = ref('')
     const minutes = ref()
@@ -28,6 +47,15 @@
         '8',
         '9'
     ]
+    const illegal = [
+        "-",
+        "+",
+        "e"
+    ]
+
+    handleEvent('edit', () => {
+        console.log("Editing")
+    })
 
     const isValid = computed(() => {
         return selectedEmoji.value && itemName.value && (minutes.value || minutes.value === 0) && (seconds.value || seconds.value === 0)
@@ -51,21 +79,11 @@
         }
     }
     function keydownMins(input, e){
-        const illegal = [
-            "-",
-            "+",
-            "e"
-        ]
-        if (illegal.includes(e.key) || (minutes.value === undefined && e.key === "0") || (nums.includes(e.key) && input.toString().length === 2)){
+        if (illegal.includes(e.key) || (nums.includes(e.key) && input.toString().length === 2)){
             e.preventDefault()
         }
     }
     function keydownSecs(input, e){
-        const illegal = [
-            "-",
-            "+",
-            "e"
-        ]
         if (e.key === "Enter"){
             secsInput.value.blur()
         } else if (illegal.includes(e.key) || (nums.includes(e.key) && input.toString().length === 2)){
@@ -102,28 +120,15 @@
         }
         dispatch('add', obj)
     }
-</script>
-<script>
-    const eventListeners = [];
-    export const dispatch = (action, data) => {
-        parent.postMessage({ pluginMessage: { action, data } }, '*');
-    };
-    export const handleEvent = () => {
-        eventListeners.push({ type, callback });
-    };
-    window.onmessage = event => {
-        const message = event.data.pluginMessage;
-        if (message) {
-            for (let eventListener of eventListeners) {
-                if (message.action === eventListener.type) eventListener.callback(message.data);
-            }
-        }
-    };  
-</script>
-    
+
+    function test() {
+        console.log(secsInput.value.value)
+    }
+</script>    
 
 <template>
     <div style="padding: 0px; position: relative; display: flex; flex-direction: column; height: 300px;">
+        <button @click="test">test</button>
         <div class="header">
             <div class="section-title-input">
                 <button class="emoji-input" @click.prevent="removeEmoji">
@@ -155,7 +160,7 @@
                         v-model="minutes" 
                         @blur="handleMins" 
                         @keyup="focusSecs" 
-                        @keydown="keydownMins(minutes, $event)"
+                        @keydown="keydownMins(minsInput.value, $event)"
                     >
                     :
                     <input 
@@ -164,7 +169,7 @@
                         placeholder="00" 
                         v-model="seconds" 
                         @blur="handleSecs" 
-                        @keydown="keydownSecs(seconds, $event)"
+                        @keydown="keydownSecs(secsInput.value, $event)"
                     >
                 </div>
             </div>  
