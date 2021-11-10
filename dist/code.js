@@ -62,10 +62,26 @@
       console.log("timer done");
     }, 1e3);
     function play(mins, secs) {
-      console.log("Played");
-      setTimeout(() => {
-        console.log("PLEASE WORK");
-      }, 1e3);
+      switch (timer.state) {
+        case "STOPPED":
+          togglePlay(true);
+          timer.start(toTime(mins, secs));
+          setTimeout(() => {
+            console.log("timer done");
+          }, 1e3);
+          break;
+        case "RUNNING":
+          togglePlay(false);
+          timer.pause();
+          break;
+        case "PAUSED":
+          togglePlay(true);
+          setTimeout(() => {
+            console.log("timer done");
+          }, 1e4);
+          timer.start(timer.remaining);
+          break;
+      }
     }
     const colorIcons = {
       purple: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">

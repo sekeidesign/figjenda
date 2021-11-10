@@ -104,31 +104,45 @@ function FigJenda() {
   }, 1000)
 
   function play(mins, secs) {
-    console.log('Played')
-    setTimeout(() => {
-      console.log('PLEASE WORK')
-    }, 1000)
-    // switch (timer.state) {
-    //   case "STOPPED": 
-    //     togglePlay(true)
-    //     //syncTimer(toTime(mins, secs) * 1000)
-    //     timer.start(toTime(mins, secs));
-    //     setTimeout(() => {
-    //       console.log('timer done')
-    //     }, 1000)
-    //     break;
-    //   case "RUNNING":
-    //     togglePlay(false)
-    //     timer.pause()
-    //     break;
-    //   case "PAUSED":
-    //     togglePlay(true)
-    //     setTimeout(() => {
-    //       console.log('timer done')
-    //     }, 10000)
-    //     timer.start(timer.remaining)
-    //     break;
-    // }
+    // Starts the whole interaction with the timer
+      // Sends time to timer
+      // Create an object with 
+        // Time + ID of current agenda item
+        // Time + ID of next agenda item
+      // Begins polling timer every second
+        // case "PLAYING"
+          // make line indicator shorter
+        // case "PAUSED"
+          // do nothing
+        // case "STOPPED"
+          // If next agenda item is empty
+            // End this entire function
+          // If next agenda item is not empty
+            // Play(nextAgendaMins, nextAgendaSecs)
+    
+    switch (timer.state) {
+      case "STOPPED": 
+      togglePlay(true)
+      //syncTimer(toTime(mins, secs) * 1000)
+      timer.start(toTime(mins, secs));
+      setTimeout(() => {
+        console.log('timer done')
+      }, 1000)
+      break;
+      case "RUNNING":
+        togglePlay(false)
+        timer.pause()
+        break;
+      case "PAUSED":
+        togglePlay(true)
+        setTimeout(() => {
+          console.log('timer done')
+        }, 10000)
+        timer.start(timer.remaining)
+        break;
+      }
+
+    // If the timer gets stopped this whole interaction ends
   }
 
 // ---- ICONS ----------------
