@@ -33,6 +33,7 @@
     const [isLocked, toggleLock] = useSyncedState("isLocked", false);
     const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
     const [themeColor, changeColor] = useSyncedState("themeColor", "#9747FF");
+    const [currentID, updateCurrent] = useSyncedState("currentID", 0);
     function openUI(payload, options = { height: 300, width: 332 }) {
       return new Promise((resolve) => {
         showUI(__html__, options);
@@ -52,37 +53,20 @@
     function toTime(mins, secs) {
       return mins * 60 + secs;
     }
-    function syncTimer(time) {
-      setTimeout(() => {
-        console.log("timer done");
-        timer.remaining === 0 ? console.log("Next") : syncTimer(timer.remaining * 1e3);
-      }, time);
-    }
-    const localTimer = setTimeout(() => {
-      console.log("timer done");
-    }, 1e3);
-    function play(mins, secs) {
-      switch (timer.state) {
-        case "STOPPED":
-          togglePlay(true);
-          timer.start(toTime(mins, secs));
-          setTimeout(() => {
-            console.log("timer done");
-          }, 1e3);
-          break;
-        case "RUNNING":
-          togglePlay(false);
-          timer.pause();
-          break;
-        case "PAUSED":
-          togglePlay(true);
-          setTimeout(() => {
-            console.log("timer done");
-          }, 1e4);
-          timer.start(timer.remaining);
-          break;
+    function playPause(mins, secs) {
+      if (timer.state === "RUNNING") {
+        timer.pause();
+        togglePlay(false);
+      } else if (timer.state === "STOPPED") {
+        timer.start(toTime(mins, secs));
+        togglePlay(true);
+      } else if (timer.state === "PAUSED") {
+        timer.resume();
+        togglePlay(true);
       }
     }
+    figma.on("timerstart", () => console.log(figma.timer.remaining));
+    figma.on("timerpause", () => console.log("Timer paused"));
     const colorIcons = {
       purple: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="12" y="12" width="28" height="28" rx="14" fill="#9747FF"/>
@@ -358,7 +342,7 @@
       cornerRadius: 999,
       fill: "#18A0FB",
       onClick: () => {
-        play(items[0].minutes, items[0].seconds);
+        playPause(items[currentID].minutes, items[currentID].seconds);
       }
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: isPlaying ? pauseIcon : playIcon
@@ -635,7 +619,7 @@
         height: "hug-contents",
         width: "fill-parent",
         padding: 4,
-        spacing: 4
+        spacing: 8
       }, /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 16
       }, items[item].emoji), /* @__PURE__ */ figma.widget.h(Text, {

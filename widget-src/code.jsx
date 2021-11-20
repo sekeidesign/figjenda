@@ -40,6 +40,7 @@ function FigJenda() {
   const [isLocked, toggleLock] = useSyncedState('isLocked', false)
   const [isAutoPlay, toggleAutoPlay] = useSyncedState('isAutoPlay', true)
   const [themeColor, changeColor] = useSyncedState('themeColor', "#9747FF")
+  const [currentID, updateCurrent] = useSyncedState('currentID', 0)
 
   function openUI(
     payload,
@@ -91,59 +92,22 @@ function FigJenda() {
     return (mins * 60) + secs;
   }
 
-  function syncTimer(time) {
-    setTimeout(() => {
-      console.log('timer done')
-      timer.remaining === 0 ? console.log('Next') : syncTimer(timer.remaining * 1000)
-    }, time)
-  }
-
-
-  const localTimer = setTimeout(() => {
-    console.log('timer done')
-  }, 1000)
-
-  function play(mins, secs) {
-    // Starts the whole interaction with the timer
-      // Sends time to timer
-      // Create an object with 
-        // Time + ID of current agenda item
-        // Time + ID of next agenda item
-      // Begins polling timer every second
-        // case "PLAYING"
-          // make line indicator shorter
-        // case "PAUSED"
-          // do nothing
-        // case "STOPPED"
-          // If next agenda item is empty
-            // End this entire function
-          // If next agenda item is not empty
-            // Play(nextAgendaMins, nextAgendaSecs)
-    
-    switch (timer.state) {
-      case "STOPPED": 
+  function playPause(mins, secs) {
+    if (timer.state === "RUNNING") {
+      timer.pause()
+      togglePlay(false)
+    } else if (timer.state === "STOPPED") {
+      timer.start(toTime(mins, secs))
       togglePlay(true)
-      //syncTimer(toTime(mins, secs) * 1000)
-      timer.start(toTime(mins, secs));
-      setTimeout(() => {
-        console.log('timer done')
-      }, 1000)
-      break;
-      case "RUNNING":
-        togglePlay(false)
-        timer.pause()
-        break;
-      case "PAUSED":
-        togglePlay(true)
-        setTimeout(() => {
-          console.log('timer done')
-        }, 10000)
-        timer.start(timer.remaining)
-        break;
-      }
-
-    // If the timer gets stopped this whole interaction ends
+    } else if (timer. state === "PAUSED") {
+      timer.resume()
+      togglePlay(true)
+    }
   }
+
+  figma.on("timerstart", () => console.log(figma.timer.remaining))
+  figma.on("timerpause", () => console.log("Timer paused"))
+
 
 // ---- ICONS ----------------
 const colorIcons = {
@@ -460,7 +424,7 @@ usePropertyMenu(
           cornerRadius={999}
           fill="#18A0FB"
           onClick={() => {
-            play(items[0].minutes, items[0].seconds)
+            playPause(items[currentID].minutes, items[currentID].seconds)
           }}
         >
           <SVG src={isPlaying ? pauseIcon : playIcon}></SVG>
@@ -782,7 +746,7 @@ usePropertyMenu(
               height="hug-contents"
               width="fill-parent"
               padding={4}
-              spacing={4}
+              spacing={8}
             >
               <Text 
                 fontSize={16}
