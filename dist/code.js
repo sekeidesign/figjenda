@@ -40,6 +40,7 @@
         handleEvent("close", () => {
           figma.closePlugin();
         });
+        dispatch();
         handleEvent("add", (data) => {
           const lastIndex = items.length - 1;
           data.id = items[lastIndex] ? items[lastIndex].id + 1 : 1;

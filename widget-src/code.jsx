@@ -53,7 +53,7 @@ function FigJenda() {
         figma.closePlugin()
       });
 
-      
+      dispatch()
 
       handleEvent('add', (data) => {
         const lastIndex = items.length - 1
