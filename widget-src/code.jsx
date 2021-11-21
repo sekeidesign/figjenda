@@ -43,7 +43,7 @@ function FigJenda() {
   const [currentID, updateCurrent] = useSyncedState('currentID', -1)
 
   function openUI(
-    payload,
+    mode,
     options = { height: 300, width: 332 }
   ) {
     return new Promise((resolve) => {
@@ -62,6 +62,12 @@ function FigJenda() {
         updatedItems.push(data)
         setItem(updatedItems)
         figma.closePlugin()
+      })
+
+      handleEvent('UIReady', () => {
+        if(mode == 'edit'){
+          dispatch('edit', "data")
+        }
       })
 
     });

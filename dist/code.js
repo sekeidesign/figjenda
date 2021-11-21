@@ -34,7 +34,7 @@
     const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
     const [themeColor, changeColor] = useSyncedState("themeColor", "#9747FF");
     const [currentID, updateCurrent] = useSyncedState("currentID", -1);
-    function openUI(payload, options = { height: 300, width: 332 }) {
+    function openUI(mode, options = { height: 300, width: 332 }) {
       return new Promise((resolve) => {
         showUI(__html__, options);
         handleEvent("close", () => {
@@ -47,6 +47,11 @@
           updatedItems.push(data);
           setItem(updatedItems);
           figma.closePlugin();
+        });
+        handleEvent("UIReady", () => {
+          if (mode == "edit") {
+            dispatch("edit", "data");
+          }
         });
       });
     }

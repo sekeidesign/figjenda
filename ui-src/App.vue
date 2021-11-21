@@ -17,7 +17,7 @@
 </script>
 
 <script setup>
-    import { ref, computed } from 'vue';
+    import { ref, computed, onMounted } from 'vue';
     import emojiSet from './emoji.json'
     Object.filter = (obj, predicate) => 
     Object.keys(obj)
@@ -124,6 +124,10 @@
     function test() {
         console.log(secsInput.value.value)
     }
+
+    onMounted(() => {
+        dispatch('UIReady')
+    })
 </script>    
 
 <template>
