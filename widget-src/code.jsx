@@ -40,7 +40,7 @@ function FigJenda() {
   const [isLocked, toggleLock] = useSyncedState('isLocked', false)
   const [isAutoPlay, toggleAutoPlay] = useSyncedState('isAutoPlay', true)
   const [themeColor, changeColor] = useSyncedState('themeColor', "#9747FF")
-  const [currentID, updateCurrent] = useSyncedState('currentID', 0)
+  const [currentID, updateCurrent] = useSyncedState('currentID', -1)
 
   function openUI(
     payload,
@@ -52,7 +52,9 @@ function FigJenda() {
       handleEvent('close', () => {
         figma.closePlugin()
       });
-  
+
+      
+
       handleEvent('add', (data) => {
         const lastIndex = items.length - 1
         data.id = items[lastIndex] ? items[lastIndex].id + 1 : 1
@@ -61,47 +63,44 @@ function FigJenda() {
         setItem(updatedItems)
         figma.closePlugin()
       })
-  
-      // const data = { intent, sound };
-      // ui.postMessage(data);
-  
-      // ui.once("message", () => {
-      //   resolve();
-      // });
+
     });
   }
-
-  // var LocalTimer = function(callback, delay) {
-  //   var timerId, start, remaining = delay;
-
-  //   this.pause = function() {
-  //       window.clearTimeout(timerId);
-  //       remaining -= Date.now() - start;
-  //   };
-
-  //   this.resume = function() {
-  //       start = Date.now();
-  //       window.clearTimeout(timerId);
-  //       timerId = window.setTimeout(callback, remaining);
-  //   };
-
-  //   this.resume();
-  // };
   
   function toTime(mins, secs){
     return (mins * 60) + secs;
   }
 
-  function playPause(mins, secs) {
+  function playPause() {
     if (timer.state === "RUNNING") {
+      togglePlay(false)
+      timer.pause()
+    } else if (timer.state === "STOPPED") {
+      console.log("Started from stop")
+      updateCurrent(currentID + 1)
+      togglePlay(true)
+      timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds))
+    } else if (timer.state === "PAUSED") {
+      togglePlay(true)
+      timer.resume()
+    }
+  }
+
+  function stop() {
+    timer.stop()
+    togglePlay(false)
+    updateCurrent(-1)
+  }
+
+  function next() {
+    if (isAutoPlay) {
+      timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds))
+      updateCurrent(currentID + 1)
+    } else {
+      timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds))
       timer.pause()
       togglePlay(false)
-    } else if (timer.state === "STOPPED") {
-      timer.start(toTime(mins, secs))
-      togglePlay(true)
-    } else if (timer. state === "PAUSED") {
-      timer.resume()
-      togglePlay(true)
+      updateCurrent(currentID + 1)
     }
   }
 
@@ -394,6 +393,9 @@ usePropertyMenu(
             type: 'solid',
             color: '#F24822'
           }}
+          onClick={() => {
+            stop()
+          }}
         >
           <SVG src={stopIcon}></SVG>
         </AutoLayout>
@@ -424,7 +426,7 @@ usePropertyMenu(
           cornerRadius={999}
           fill="#18A0FB"
           onClick={() => {
-            playPause(items[currentID].minutes, items[currentID].seconds)
+            playPause()
           }}
         >
           <SVG src={isPlaying ? pauseIcon : playIcon}></SVG>
@@ -457,6 +459,9 @@ usePropertyMenu(
             type: 'solid',
             color: "#000",
             opacity: .8
+          }}
+          onClick={() => {
+            next()
           }}
         >
           <SVG src={skipIcon}></SVG>
@@ -733,7 +738,7 @@ usePropertyMenu(
             width="fill-parent"
             padding={8}
             spacing={4}
-            fill="#FFF"
+            fill={currentID === items[item].id ? "#EDF5FA" : "#FFF"}
             effect={{
               type: 'inner-shadow',
               color: '#E5E5E5',

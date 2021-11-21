@@ -128,7 +128,7 @@
 
 <template>
     <div style="padding: 0px; position: relative; display: flex; flex-direction: column; height: 300px;">
-        <button @click="test">test</button>
+        <!-- <button @click="test">test</button> -->
         <div class="header">
             <div class="section-title-input">
                 <button class="emoji-input" @click.prevent="removeEmoji">
