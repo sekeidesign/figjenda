@@ -34,25 +34,31 @@
     const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
     const [themeColor, changeColor] = useSyncedState("themeColor", "#9747FF");
     const [currentID, updateCurrent] = useSyncedState("currentID", -1);
-    function openUI(mode, options = { height: 300, width: 332 }) {
+    function openUI(mode, data, options = { height: 300, width: 332 }) {
       return new Promise((resolve) => {
         showUI(__html__, options);
         handleEvent("close", () => {
           figma.closePlugin();
         });
-        dispatch();
-        handleEvent("add", (data) => {
+        handleEvent("add", (data2) => {
           const lastIndex = items.length - 1;
-          data.id = items[lastIndex] ? items[lastIndex].id + 1 : 1;
+          data2.id = items[lastIndex] ? items[lastIndex].id + 1 : 1;
           let updatedItems = items;
-          updatedItems.push(data);
+          updatedItems.push(data2);
           setItem(updatedItems);
           figma.closePlugin();
         });
         handleEvent("UIReady", () => {
           if (mode == "edit") {
-            dispatch("edit", "data");
+            dispatch("edit", data);
           }
+        });
+        handleEvent("editDone", (data2) => {
+          let updatedItems = items;
+          updatedItems[data2.id - 1] = data2;
+          console.log(updatedItems);
+          setItem(updatedItems);
+          figma.closePlugin();
         });
       });
     }
@@ -750,7 +756,13 @@
         fill: "#FFF",
         padding: 6,
         spacing: 0,
-        onClick: () => openUI("edit")
+        onClick: () => openUI("edit", {
+          emoji: items[item].emoji,
+          id: items[item].id,
+          name: items[item].name,
+          minutes: items[item].minutes,
+          seconds: items[item].seconds
+        })
       }, /* @__PURE__ */ figma.widget.h(SVG, {
         src: editIcon
       }))));

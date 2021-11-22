@@ -30,6 +30,7 @@
     const itemName = ref('')
     const minutes = ref()
     const seconds = ref()
+    const id = ref(null)
 
     const secsInput = ref(null)
     const minsInput = ref(null)
@@ -53,8 +54,15 @@
         "e"
     ]
 
-    handleEvent('edit', () => {
-        console.log("Editing")
+    const mode = ref('Add')
+
+    handleEvent('edit', (data) => {
+        mode.value = 'Edit'
+        selectedEmoji.value = data.emoji
+        itemName.value = data.name
+        minutes.value = data.minutes
+        seconds.value = data.seconds
+        id.value = data.id
     })
 
     const isValid = computed(() => {
@@ -119,6 +127,16 @@
           seconds: seconds.value 
         }
         dispatch('add', obj)
+    }
+    function saveEdit(){
+        const obj = {
+          id: id.value,
+          name: itemName.value,
+          emoji: selectedEmoji.value,
+          minutes: minutes.value,
+          seconds: seconds.value 
+        }
+        dispatch('editDone', obj)
     }
 
     function test() {
@@ -185,7 +203,8 @@
         </div>
         <div class="actions">
             <button class="primary-btn destructive" @click="dispatch('close')">Cancel</button>
-            <button class="primary-btn" @click="addItem" :disabled="!isValid">Add</button>
+            <button v-if="mode === 'Add'" class="primary-btn" @click="addItem" :disabled="!isValid">Add</button>
+            <button v-else-if="mode === 'Edit'" class="primary-btn" @click="saveEdit" :disabled="!isValid">Done</button>
         </div>
     </div>
 </template>

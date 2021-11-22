@@ -44,6 +44,7 @@ function FigJenda() {
 
   function openUI(
     mode,
+    data,
     options = { height: 300, width: 332 }
   ) {
     return new Promise((resolve) => {
@@ -52,8 +53,6 @@ function FigJenda() {
       handleEvent('close', () => {
         figma.closePlugin()
       });
-
-      dispatch()
 
       handleEvent('add', (data) => {
         const lastIndex = items.length - 1
@@ -66,8 +65,16 @@ function FigJenda() {
 
       handleEvent('UIReady', () => {
         if(mode == 'edit'){
-          dispatch('edit', "data")
+          dispatch('edit', data)
         }
+      })
+
+      handleEvent('editDone', (data) => {
+        let updatedItems = items
+        updatedItems[data.id - 1] = data
+        console.log(updatedItems)
+        setItem(updatedItems)
+        figma.closePlugin()
       })
 
     });
@@ -879,7 +886,13 @@ usePropertyMenu(
                 fill="#FFF"
                 padding={6}
                 spacing={0}
-                onClick={() => openUI('edit')}
+                onClick={() => openUI('edit', {
+                  emoji: items[item].emoji,
+                  id: items[item].id,
+                  name: items[item].name,
+                  minutes: items[item].minutes,
+                  seconds: items[item].seconds
+                })}
               >
                 <SVG 
                   src={editIcon}
