@@ -66,18 +66,11 @@
       return mins * 60 + secs;
     }
     function playPause() {
-      if (timer.state === "RUNNING") {
-        togglePlay(false);
-        timer.pause();
-      } else if (timer.state === "STOPPED") {
-        console.log("Started from stop");
-        updateCurrent(currentID + 1);
-        togglePlay(true);
-        timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds));
-      } else if (timer.state === "PAUSED") {
-        togglePlay(true);
-        timer.resume();
-      }
+      console.log("Started agenda");
+      updateCurrent(0);
+      togglePlay(true);
+      console.log("Index: ", currentID);
+      timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds));
     }
     function stop() {
       timer.stop();
@@ -90,9 +83,8 @@
         updateCurrent(currentID + 1);
       } else {
         timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds));
-        timer.pause();
-        togglePlay(false);
         updateCurrent(currentID + 1);
+        timer.pause();
       }
     }
     figma.on("timerstart", () => console.log(figma.timer.remaining));
@@ -322,21 +314,7 @@
       padding: 0,
       spacing: 8
     }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: items.length > 0,
-      verticalAlignItems: "center",
-      height: "hug-contents",
-      width: "hug-contents",
-      padding: 12,
-      cornerRadius: 999,
-      stroke: {
-        type: "solid",
-        color: "#000",
-        opacity: 0.3
-      }
-    }, /* @__PURE__ */ figma.widget.h(SVG, {
-      src: stopIcon
-    })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: items.length === 0,
+      hidden: isPlaying === false,
       verticalAlignItems: "center",
       height: "hug-contents",
       width: "hug-contents",
@@ -367,7 +345,7 @@
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: playIcon
     })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: items.length === 0,
+      hidden: items.length === 0 || isPlaying === true,
       verticalAlignItems: "center",
       height: "hug-contents",
       width: "hug-contents",
@@ -378,7 +356,7 @@
         playPause();
       }
     }, /* @__PURE__ */ figma.widget.h(SVG, {
-      src: isPlaying ? pauseIcon : playIcon
+      src: playIcon
     })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
       hidden: items.length > 0,
       verticalAlignItems: "center",
@@ -395,7 +373,7 @@
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: skipIcon
     })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: items.length === 0,
+      hidden: isPlaying === false || currentID >= items.length - 1,
       verticalAlignItems: "center",
       height: "hug-contents",
       width: "hug-contents",
@@ -643,14 +621,23 @@
         width: "fill-parent",
         padding: 8,
         spacing: 4,
-        fill: currentID === items[item].id ? "#EDF5FA" : "#FFF",
+        fill: currentID === items[item].id - 1 ? "#EDF5FA" : "#FFF",
         effect: {
           type: "inner-shadow",
           color: "#E5E5E5",
           offset: { x: 0, y: -1 },
           blur: 0
         }
-      }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
+      }, /* @__PURE__ */ figma.widget.h(Frame, {
+        hidden: currentID !== items[item].id - 1,
+        height: 24,
+        width: 4,
+        cornerRadius: 99,
+        fill: {
+          type: "solid",
+          color: "#18A0FB"
+        }
+      }), /* @__PURE__ */ figma.widget.h(AutoLayout, {
         verticalAlignItems: "center",
         height: "hug-contents",
         width: "fill-parent",
@@ -661,11 +648,11 @@
       }, items[item].emoji), /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 14,
         lineHeight: 24,
-        fontWeight: 400,
+        fontWeight: currentID === items[item].id - 1 ? 600 : 400,
         fontFamily: "Inter",
         fill: {
           type: "solid",
-          color: "#000",
+          color: `${currentID === items[item].id - 1 ? "#18A0FB" : "#000"}`,
           opacity: 0.8
         }
       }, `${items[item].name.slice(0, truncateLength)}${items[item].name.length < truncateLength ? "" : "..."}`)), /* @__PURE__ */ figma.widget.h(AutoLayout, {
@@ -685,11 +672,11 @@
       }), /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 14,
         lineHeight: 24,
-        fontWeight: 400,
+        fontWeight: currentID === items[item].id - 1 ? 600 : 400,
         fontFamily: "Inter",
         fill: {
           type: "solid",
-          color: "#000",
+          color: `${currentID === items[item].id - 1 ? "#18A0FB" : "#000"}`,
           opacity: 0.8
         }
       }, zeroPad(items[item].minutes) + ":" + zeroPad(items[item].seconds))), /* @__PURE__ */ figma.widget.h(Frame, {
@@ -740,7 +727,7 @@
         horizontalAlignItems: "center",
         height: "hug-contents",
         width: "hug-contents",
-        fill: "#FFF",
+        fill: currentID === items[item].id - 1 ? "#EDF5FA" : "#FFF",
         padding: 6,
         spacing: 0,
         onClick: () => {
@@ -753,7 +740,7 @@
         horizontalAlignItems: "center",
         height: "hug-contents",
         width: "hug-contents",
-        fill: "#FFF",
+        fill: currentID === items[item].id - 1 ? "#EDF5FA" : "#FFF",
         padding: 6,
         spacing: 0,
         onClick: () => openUI("edit", {

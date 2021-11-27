@@ -85,18 +85,11 @@ function FigJenda() {
   }
 
   function playPause() {
-    if (timer.state === "RUNNING") {
-      togglePlay(false)
-      timer.pause()
-    } else if (timer.state === "STOPPED") {
-      console.log("Started from stop")
-      updateCurrent(currentID + 1)
-      togglePlay(true)
-      timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds))
-    } else if (timer.state === "PAUSED") {
-      togglePlay(true)
-      timer.resume()
-    }
+    console.log("Started agenda")
+    updateCurrent(0) // Updates currentID to be 0
+    togglePlay(true)
+    console.log("Index: ", currentID) // Expected output 'Index: 0' — Actual output 'Index: -1'
+    timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds))
   }
 
   function stop() {
@@ -111,9 +104,8 @@ function FigJenda() {
       updateCurrent(currentID + 1)
     } else {
       timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds))
-      timer.pause()
-      togglePlay(false)
       updateCurrent(currentID + 1)
+      timer.pause()
     }
   }
 
@@ -380,22 +372,7 @@ usePropertyMenu(
         spacing={8}
       >
         <AutoLayout
-          hidden={items.length > 0}
-          verticalAlignItems="center"
-          height="hug-contents"
-          width="hug-contents"
-          padding={12}
-          cornerRadius={999}
-          stroke={{
-            type: 'solid',
-            color: '#000',
-            opacity: .3
-          }}
-        >
-          <SVG src={stopIcon}></SVG>
-        </AutoLayout>
-        <AutoLayout
-          hidden={items.length === 0}
+          hidden={isPlaying === false}
           verticalAlignItems="center"
           height="hug-contents"
           width="hug-contents"
@@ -431,7 +408,7 @@ usePropertyMenu(
           ></SVG>
         </AutoLayout>
         <AutoLayout
-          hidden={items.length === 0}
+          hidden={items.length === 0 || isPlaying === true}
           verticalAlignItems="center"
           height="hug-contents"
           width="hug-contents"
@@ -442,7 +419,7 @@ usePropertyMenu(
             playPause()
           }}
         >
-          <SVG src={isPlaying ? pauseIcon : playIcon}></SVG>
+          <SVG src={playIcon}></SVG>
         </AutoLayout>
         <AutoLayout
           hidden={items.length > 0}
@@ -461,7 +438,7 @@ usePropertyMenu(
           <SVG src={skipIcon}></SVG>
         </AutoLayout>
         <AutoLayout
-          hidden={items.length === 0}
+          hidden={isPlaying === false || currentID >= items.length - 1}
           verticalAlignItems="center"
           height="hug-contents"
           width="hug-contents"
@@ -751,14 +728,21 @@ usePropertyMenu(
             width="fill-parent"
             padding={8}
             spacing={4}
-            fill={currentID === items[item].id ? "#EDF5FA" : "#FFF"}
-            effect={{
-              type: 'inner-shadow',
-              color: '#E5E5E5',
-              offset: {x: 0, y: - 1},
-              blur: 0
-            }}
+            fill={currentID === items[item].id - 1 ? "#EDF5FA" : "#FFF"}
+            effect={
+              {
+                type: 'inner-shadow',
+                color: '#E5E5E5',
+                offset: {x: 0, y: - 1},
+                blur: 0
+              }
+            }
           >
+            <Frame hidden={currentID !== items[item].id -1} height={24} width={4} cornerRadius={99} fill={{
+                type: 'solid',
+                color: '#18A0FB'
+              }}
+            ></Frame>
             <AutoLayout
               verticalAlignItems="center"
               height="hug-contents"
@@ -774,11 +758,11 @@ usePropertyMenu(
               <Text 
                 fontSize={14}
                 lineHeight={24}
-                fontWeight={400}
+                fontWeight={currentID === items[item].id - 1 ? 600 : 400}
                 fontFamily="Inter"
                 fill={{
                   type: 'solid',
-                  color: '#000',
+                  color: `${currentID === items[item].id - 1 ? "#18A0FB" : "#000"}`,
                   opacity: .8
                 }}
               >
@@ -802,11 +786,11 @@ usePropertyMenu(
               <Text 
                 fontSize={14}
                 lineHeight={24}
-                fontWeight={400}
+                fontWeight={currentID === items[item].id - 1 ? 600 : 400}
                 fontFamily="Inter"
                 fill={{
                   type: 'solid',
-                  color: '#000',
+                  color: `${currentID === items[item].id - 1 ? "#18A0FB" : "#000"}`,
                   opacity: .8
                 }}
               >
@@ -867,7 +851,7 @@ usePropertyMenu(
                 horizontalAlignItems="center"
                 height="hug-contents"
                 width="hug-contents"
-                fill="#FFF"
+                fill={currentID === items[item].id - 1 ? "#EDF5FA" : "#FFF"}
                 padding={6}
                 spacing={0}
                 onClick={() => {
@@ -883,7 +867,7 @@ usePropertyMenu(
                 horizontalAlignItems="center"
                 height="hug-contents"
                 width="hug-contents"
-                fill="#FFF"
+                fill={currentID === items[item].id - 1 ? "#EDF5FA" : "#FFF"}
                 padding={6}
                 spacing={0}
                 onClick={() => openUI('edit', {

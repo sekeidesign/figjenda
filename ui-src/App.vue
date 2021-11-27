@@ -105,8 +105,8 @@
     }
     function handleSecs(){
         if (seconds.value >= 60) {
-            minutes.value = Math.floor(seconds.value/60)
-            seconds.value = seconds.value % 60
+            minutes.value = Math.floor(seconds.value/60).toFixed(2)
+            seconds.value = (seconds.value % 60).toFixed(2)
         } else if (seconds.value === undefined) {
             seconds.value = 0
         } else {
@@ -189,8 +189,8 @@
                         type="number" 
                         ref="secsInput" 
                         placeholder="00" 
-                        v-model="seconds" 
-                        @blur="handleSecs" 
+                        v-model="seconds"
+                        @blur="handleSecs"
                         @keydown="keydownSecs(secsInput.value, $event)"
                     >
                 </div>
