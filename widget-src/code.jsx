@@ -1,7 +1,7 @@
 //import { useEffect } from "react";
 
 const { widget, ui, showUI, closePlugin, timer } = figma
-const { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu, useEffect } = widget;
+const { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu, useEffect, waitForTask } = widget;
 const eventListeners = [];
 
 export const dispatch = (action, data) => {
@@ -25,6 +25,9 @@ function zeroPad(num){
 
 // ---- WIDGET ----------------
 function FigJenda() {
+  // useEffect(() => {
+  //   waitForTask(new Promise((resolve) => {}));
+  // });
   
   // ---- STATE ----------------
   const [items, setItem] = useSyncedState('items', [
@@ -52,6 +55,7 @@ function FigJenda() {
   
       handleEvent('close', () => {
         figma.closePlugin()
+        resolve()
       });
 
       handleEvent('add', (data) => {
@@ -61,6 +65,7 @@ function FigJenda() {
         updatedItems.push(data)
         setItem(updatedItems)
         figma.closePlugin()
+        resolve()
       })
 
       handleEvent('UIReady', () => {
@@ -75,6 +80,7 @@ function FigJenda() {
         console.log(updatedItems)
         setItem(updatedItems)
         figma.closePlugin()
+        resolve()
       })
 
     });
@@ -85,10 +91,10 @@ function FigJenda() {
   }
 
   function playPause() {
-    console.log("Started agenda")
+    //console.log("Started agenda")
     updateCurrent(0) // Updates currentID to be 0
     togglePlay(true)
-    console.log("Index: ", currentID) // Expected output 'Index: 0' — Actual output 'Index: -1'
+    //console.log("Index: ", currentID) // Expected output 'Index: 0' — Actual output 'Index: -1'
     timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds))
   }
 
@@ -109,8 +115,8 @@ function FigJenda() {
     }
   }
 
-  figma.on("timerstart", () => console.log(figma.timer.remaining))
-  figma.on("timerpause", () => console.log("Timer paused"))
+  //figma.on("timerstart", () => console.log(figma.timer.remaining))
+  //figma.on("timerpause", () => console.log("Timer paused"))
 
 
 // ---- ICONS ----------------
@@ -144,6 +150,17 @@ const timeIcon = `
   <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
 </svg>
 `;
+const timeIconBlue = `
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#18A0FB" viewBox="0 0 16 16">
+  <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+</svg>
+`;
+const checkIcon = `
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="rgba(0, 0, 0, .15)" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+</svg>
+`
 const deleteIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#F24822" viewBox="0 0 16 16">
   <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
@@ -728,7 +745,7 @@ usePropertyMenu(
             width="fill-parent"
             padding={8}
             spacing={4}
-            fill={currentID === items[item].id - 1 ? "#EDF5FA" : "#FFF"}
+            fill={currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF"}
             effect={
               {
                 type: 'inner-shadow',
@@ -760,13 +777,14 @@ usePropertyMenu(
                 lineHeight={24}
                 fontWeight={currentID === items[item].id - 1 ? 600 : 400}
                 fontFamily="Inter"
+                textDecoration={currentID > items[item].id - 1 ? "strikethrough" : "none"}
                 fill={{
                   type: 'solid',
-                  color: `${currentID === items[item].id - 1 ? "#18A0FB" : "#000"}`,
+                  color: `${currentID === items[item].id - 1 ? "#18A0FB" : currentID > items[item].id - 1 ? "#B3B3B3" : "#000"}`,
                   opacity: .8
                 }}
               >
-                {`${items[item].name.slice(0, truncateLength)}${items[item].name.length < truncateLength ? '' : '...'}`}
+                {`${items[item].name.slice(0, truncateLength)}${items[item].name.length <= truncateLength ? '' : '...'}`}
               </Text>
             </AutoLayout>
             <AutoLayout
@@ -782,15 +800,16 @@ usePropertyMenu(
               }}
               spacing={4}
             >
-              <SVG src={timeIcon}></SVG>
+              <SVG src={currentID === items[item].id - 1 ? timeIconBlue : currentID > items[item].id - 1 ? checkIcon : timeIcon}></SVG>
               <Text 
                 fontSize={14}
                 lineHeight={24}
-                fontWeight={currentID === items[item].id - 1 ? 600 : 400}
+                fontWeight={400}
                 fontFamily="Inter"
+                textDecoration={currentID > items[item].id - 1 ? "strikethrough" : "none"}
                 fill={{
                   type: 'solid',
-                  color: `${currentID === items[item].id - 1 ? "#18A0FB" : "#000"}`,
+                  color: `${currentID === items[item].id - 1 ? "#18A0FB" : currentID > items[item].id - 1 ? "#B3B3B3" : "#000"}`,
                   opacity: .8
                 }}
               >
@@ -851,7 +870,7 @@ usePropertyMenu(
                 horizontalAlignItems="center"
                 height="hug-contents"
                 width="hug-contents"
-                fill={currentID === items[item].id - 1 ? "#EDF5FA" : "#FFF"}
+                fill={currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF"}
                 padding={6}
                 spacing={0}
                 onClick={() => {
@@ -867,7 +886,7 @@ usePropertyMenu(
                 horizontalAlignItems="center"
                 height="hug-contents"
                 width="hug-contents"
-                fill={currentID === items[item].id - 1 ? "#EDF5FA" : "#FFF"}
+                fill={currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF"}
                 padding={6}
                 spacing={0}
                 onClick={() => openUI('edit', {

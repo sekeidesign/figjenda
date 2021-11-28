@@ -1,7 +1,7 @@
 (() => {
   // widget-src/code.jsx
   var { widget, ui, showUI, closePlugin, timer } = figma;
-  var { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu, useEffect } = widget;
+  var { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu, useEffect, waitForTask } = widget;
   var eventListeners = [];
   var dispatch = (action, data) => {
     ui.postMessage({ action, data });
@@ -39,6 +39,7 @@
         showUI(__html__, options);
         handleEvent("close", () => {
           figma.closePlugin();
+          resolve();
         });
         handleEvent("add", (data2) => {
           const lastIndex = items.length - 1;
@@ -47,6 +48,7 @@
           updatedItems.push(data2);
           setItem(updatedItems);
           figma.closePlugin();
+          resolve();
         });
         handleEvent("UIReady", () => {
           if (mode == "edit") {
@@ -59,6 +61,7 @@
           console.log(updatedItems);
           setItem(updatedItems);
           figma.closePlugin();
+          resolve();
         });
       });
     }
@@ -66,10 +69,8 @@
       return mins * 60 + secs;
     }
     function playPause() {
-      console.log("Started agenda");
       updateCurrent(0);
       togglePlay(true);
-      console.log("Index: ", currentID);
       timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds));
     }
     function stop() {
@@ -87,8 +88,6 @@
         timer.pause();
       }
     }
-    figma.on("timerstart", () => console.log(figma.timer.remaining));
-    figma.on("timerpause", () => console.log("Timer paused"));
     const colorIcons = {
       purple: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="12" y="12" width="28" height="28" rx="14" fill="#9747FF"/>
@@ -116,6 +115,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="rgba(0, 0, 0, .3)" viewBox="0 0 16 16">
   <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
   <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+</svg>
+`;
+    const timeIconBlue = `
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#18A0FB" viewBox="0 0 16 16">
+  <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+</svg>
+`;
+    const checkIcon = `
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="rgba(0, 0, 0, .15)" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
 </svg>
 `;
     const deleteIcon = `
@@ -621,7 +631,7 @@
         width: "fill-parent",
         padding: 8,
         spacing: 4,
-        fill: currentID === items[item].id - 1 ? "#EDF5FA" : "#FFF",
+        fill: currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF",
         effect: {
           type: "inner-shadow",
           color: "#E5E5E5",
@@ -650,12 +660,13 @@
         lineHeight: 24,
         fontWeight: currentID === items[item].id - 1 ? 600 : 400,
         fontFamily: "Inter",
+        textDecoration: currentID > items[item].id - 1 ? "strikethrough" : "none",
         fill: {
           type: "solid",
-          color: `${currentID === items[item].id - 1 ? "#18A0FB" : "#000"}`,
+          color: `${currentID === items[item].id - 1 ? "#18A0FB" : currentID > items[item].id - 1 ? "#B3B3B3" : "#000"}`,
           opacity: 0.8
         }
-      }, `${items[item].name.slice(0, truncateLength)}${items[item].name.length < truncateLength ? "" : "..."}`)), /* @__PURE__ */ figma.widget.h(AutoLayout, {
+      }, `${items[item].name.slice(0, truncateLength)}${items[item].name.length <= truncateLength ? "" : "..."}`)), /* @__PURE__ */ figma.widget.h(AutoLayout, {
         verticalAlignItems: "center",
         horizontalAlignItems: "end",
         height: "hug-contents",
@@ -668,15 +679,16 @@
         },
         spacing: 4
       }, /* @__PURE__ */ figma.widget.h(SVG, {
-        src: timeIcon
+        src: currentID === items[item].id - 1 ? timeIconBlue : currentID > items[item].id - 1 ? checkIcon : timeIcon
       }), /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 14,
         lineHeight: 24,
-        fontWeight: currentID === items[item].id - 1 ? 600 : 400,
+        fontWeight: 400,
         fontFamily: "Inter",
+        textDecoration: currentID > items[item].id - 1 ? "strikethrough" : "none",
         fill: {
           type: "solid",
-          color: `${currentID === items[item].id - 1 ? "#18A0FB" : "#000"}`,
+          color: `${currentID === items[item].id - 1 ? "#18A0FB" : currentID > items[item].id - 1 ? "#B3B3B3" : "#000"}`,
           opacity: 0.8
         }
       }, zeroPad(items[item].minutes) + ":" + zeroPad(items[item].seconds))), /* @__PURE__ */ figma.widget.h(Frame, {
@@ -727,7 +739,7 @@
         horizontalAlignItems: "center",
         height: "hug-contents",
         width: "hug-contents",
-        fill: currentID === items[item].id - 1 ? "#EDF5FA" : "#FFF",
+        fill: currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF",
         padding: 6,
         spacing: 0,
         onClick: () => {
@@ -740,7 +752,7 @@
         horizontalAlignItems: "center",
         height: "hug-contents",
         width: "hug-contents",
-        fill: currentID === items[item].id - 1 ? "#EDF5FA" : "#FFF",
+        fill: currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF",
         padding: 6,
         spacing: 0,
         onClick: () => openUI("edit", {
