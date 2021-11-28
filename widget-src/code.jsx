@@ -1,7 +1,7 @@
 //import { useEffect } from "react";
 
 const { widget, ui, showUI, closePlugin, timer } = figma
-const { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu, useEffect } = widget;
+const { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu, useEffect, waitForTask } = widget;
 const eventListeners = [];
 
 export const dispatch = (action, data) => {
@@ -25,6 +25,9 @@ function zeroPad(num){
 
 // ---- WIDGET ----------------
 function FigJenda() {
+  // useEffect(() => {
+  //   waitForTask(new Promise((resolve) => {}));
+  // });
   
   // ---- STATE ----------------
   const [items, setItem] = useSyncedState('items', [
@@ -40,9 +43,11 @@ function FigJenda() {
   const [isLocked, toggleLock] = useSyncedState('isLocked', false)
   const [isAutoPlay, toggleAutoPlay] = useSyncedState('isAutoPlay', true)
   const [themeColor, changeColor] = useSyncedState('themeColor', "#9747FF")
+  const [currentID, updateCurrent] = useSyncedState('currentID', -1)
 
   function openUI(
-    payload,
+    mode,
+    data,
     options = { height: 300, width: 332 }
   ) {
     return new Promise((resolve) => {
@@ -50,8 +55,9 @@ function FigJenda() {
   
       handleEvent('close', () => {
         figma.closePlugin()
+        resolve()
       });
-  
+
       handleEvent('add', (data) => {
         const lastIndex = items.length - 1
         data.id = items[lastIndex] ? items[lastIndex].id + 1 : 1
@@ -59,77 +65,59 @@ function FigJenda() {
         updatedItems.push(data)
         setItem(updatedItems)
         figma.closePlugin()
+        resolve()
       })
-  
-      // const data = { intent, sound };
-      // ui.postMessage(data);
-  
-      // ui.once("message", () => {
-      //   resolve();
-      // });
+
+      handleEvent('UIReady', () => {
+        if(mode == 'edit'){
+          dispatch('edit', data)
+        }
+      })
+
+      handleEvent('editDone', (data) => {
+        let updatedItems = items
+        updatedItems[data.id - 1] = data
+        console.log(updatedItems)
+        setItem(updatedItems)
+        figma.closePlugin()
+        resolve()
+      })
+
     });
   }
-
-  // var LocalTimer = function(callback, delay) {
-  //   var timerId, start, remaining = delay;
-
-  //   this.pause = function() {
-  //       window.clearTimeout(timerId);
-  //       remaining -= Date.now() - start;
-  //   };
-
-  //   this.resume = function() {
-  //       start = Date.now();
-  //       window.clearTimeout(timerId);
-  //       timerId = window.setTimeout(callback, remaining);
-  //   };
-
-  //   this.resume();
-  // };
   
   function toTime(mins, secs){
     return (mins * 60) + secs;
   }
 
-  function syncTimer(time) {
-    setTimeout(() => {
-      console.log('timer done')
-      timer.remaining === 0 ? console.log('Next') : syncTimer(timer.remaining * 1000)
-    }, time)
+  function playPause() {
+    //console.log("Started agenda")
+    updateCurrent(0) // Updates currentID to be 0
+    togglePlay(true)
+    //console.log("Index: ", currentID) // Expected output 'Index: 0' — Actual output 'Index: -1'
+    timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds))
   }
 
-
-  const localTimer = setTimeout(() => {
-    console.log('timer done')
-  }, 1000)
-
-  function play(mins, secs) {
-    console.log('Played')
-    setTimeout(() => {
-      console.log('PLEASE WORK')
-    }, 1000)
-    // switch (timer.state) {
-    //   case "STOPPED": 
-    //     togglePlay(true)
-    //     //syncTimer(toTime(mins, secs) * 1000)
-    //     timer.start(toTime(mins, secs));
-    //     setTimeout(() => {
-    //       console.log('timer done')
-    //     }, 1000)
-    //     break;
-    //   case "RUNNING":
-    //     togglePlay(false)
-    //     timer.pause()
-    //     break;
-    //   case "PAUSED":
-    //     togglePlay(true)
-    //     setTimeout(() => {
-    //       console.log('timer done')
-    //     }, 10000)
-    //     timer.start(timer.remaining)
-    //     break;
-    // }
+  function stop() {
+    timer.stop()
+    togglePlay(false)
+    updateCurrent(-1)
   }
+
+  function next() {
+    if (isAutoPlay) {
+      timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds))
+      updateCurrent(currentID + 1)
+    } else {
+      timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds))
+      updateCurrent(currentID + 1)
+      timer.pause()
+    }
+  }
+
+  //figma.on("timerstart", () => console.log(figma.timer.remaining))
+  //figma.on("timerpause", () => console.log("Timer paused"))
+
 
 // ---- ICONS ----------------
 const colorIcons = {
@@ -162,6 +150,17 @@ const timeIcon = `
   <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
 </svg>
 `;
+const timeIconBlue = `
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#18A0FB" viewBox="0 0 16 16">
+  <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+</svg>
+`;
+const checkIcon = `
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="rgba(0, 0, 0, .15)" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+</svg>
+`
 const deleteIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#F24822" viewBox="0 0 16 16">
   <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
@@ -390,22 +389,7 @@ usePropertyMenu(
         spacing={8}
       >
         <AutoLayout
-          hidden={items.length > 0}
-          verticalAlignItems="center"
-          height="hug-contents"
-          width="hug-contents"
-          padding={12}
-          cornerRadius={999}
-          stroke={{
-            type: 'solid',
-            color: '#000',
-            opacity: .3
-          }}
-        >
-          <SVG src={stopIcon}></SVG>
-        </AutoLayout>
-        <AutoLayout
-          hidden={items.length === 0}
+          hidden={isPlaying === false}
           verticalAlignItems="center"
           height="hug-contents"
           width="hug-contents"
@@ -415,6 +399,9 @@ usePropertyMenu(
           stroke={{
             type: 'solid',
             color: '#F24822'
+          }}
+          onClick={() => {
+            stop()
           }}
         >
           <SVG src={stopIcon}></SVG>
@@ -438,7 +425,7 @@ usePropertyMenu(
           ></SVG>
         </AutoLayout>
         <AutoLayout
-          hidden={items.length === 0}
+          hidden={items.length === 0 || isPlaying === true}
           verticalAlignItems="center"
           height="hug-contents"
           width="hug-contents"
@@ -446,10 +433,10 @@ usePropertyMenu(
           cornerRadius={999}
           fill="#18A0FB"
           onClick={() => {
-            play(items[0].minutes, items[0].seconds)
+            playPause()
           }}
         >
-          <SVG src={isPlaying ? pauseIcon : playIcon}></SVG>
+          <SVG src={playIcon}></SVG>
         </AutoLayout>
         <AutoLayout
           hidden={items.length > 0}
@@ -468,7 +455,7 @@ usePropertyMenu(
           <SVG src={skipIcon}></SVG>
         </AutoLayout>
         <AutoLayout
-          hidden={items.length === 0}
+          hidden={isPlaying === false || currentID >= items.length - 1}
           verticalAlignItems="center"
           height="hug-contents"
           width="hug-contents"
@@ -479,6 +466,9 @@ usePropertyMenu(
             type: 'solid',
             color: "#000",
             opacity: .8
+          }}
+          onClick={() => {
+            next()
           }}
         >
           <SVG src={skipIcon}></SVG>
@@ -755,20 +745,27 @@ usePropertyMenu(
             width="fill-parent"
             padding={8}
             spacing={4}
-            fill="#FFF"
-            effect={{
-              type: 'inner-shadow',
-              color: '#E5E5E5',
-              offset: {x: 0, y: - 1},
-              blur: 0
-            }}
+            fill={currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF"}
+            effect={
+              {
+                type: 'inner-shadow',
+                color: '#E5E5E5',
+                offset: {x: 0, y: - 1},
+                blur: 0
+              }
+            }
           >
+            <Frame hidden={currentID !== items[item].id -1} height={24} width={4} cornerRadius={99} fill={{
+                type: 'solid',
+                color: '#18A0FB'
+              }}
+            ></Frame>
             <AutoLayout
               verticalAlignItems="center"
               height="hug-contents"
               width="fill-parent"
               padding={4}
-              spacing={4}
+              spacing={8}
             >
               <Text 
                 fontSize={16}
@@ -778,15 +775,16 @@ usePropertyMenu(
               <Text 
                 fontSize={14}
                 lineHeight={24}
-                fontWeight={400}
+                fontWeight={currentID === items[item].id - 1 ? 600 : 400}
                 fontFamily="Inter"
+                textDecoration={currentID > items[item].id - 1 ? "strikethrough" : "none"}
                 fill={{
                   type: 'solid',
-                  color: '#000',
+                  color: `${currentID === items[item].id - 1 ? "#18A0FB" : currentID > items[item].id - 1 ? "#B3B3B3" : "#000"}`,
                   opacity: .8
                 }}
               >
-                {`${items[item].name.slice(0, truncateLength)}${items[item].name.length < truncateLength ? '' : '...'}`}
+                {`${items[item].name.slice(0, truncateLength)}${items[item].name.length <= truncateLength ? '' : '...'}`}
               </Text>
             </AutoLayout>
             <AutoLayout
@@ -802,15 +800,16 @@ usePropertyMenu(
               }}
               spacing={4}
             >
-              <SVG src={timeIcon}></SVG>
+              <SVG src={currentID === items[item].id - 1 ? timeIconBlue : currentID > items[item].id - 1 ? checkIcon : timeIcon}></SVG>
               <Text 
                 fontSize={14}
                 lineHeight={24}
                 fontWeight={400}
                 fontFamily="Inter"
+                textDecoration={currentID > items[item].id - 1 ? "strikethrough" : "none"}
                 fill={{
                   type: 'solid',
-                  color: '#000',
+                  color: `${currentID === items[item].id - 1 ? "#18A0FB" : currentID > items[item].id - 1 ? "#B3B3B3" : "#000"}`,
                   opacity: .8
                 }}
               >
@@ -871,7 +870,7 @@ usePropertyMenu(
                 horizontalAlignItems="center"
                 height="hug-contents"
                 width="hug-contents"
-                fill="#FFF"
+                fill={currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF"}
                 padding={6}
                 spacing={0}
                 onClick={() => {
@@ -887,10 +886,16 @@ usePropertyMenu(
                 horizontalAlignItems="center"
                 height="hug-contents"
                 width="hug-contents"
-                fill="#FFF"
+                fill={currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF"}
                 padding={6}
                 spacing={0}
-                onClick={() => openUI('edit')}
+                onClick={() => openUI('edit', {
+                  emoji: items[item].emoji,
+                  id: items[item].id,
+                  name: items[item].name,
+                  minutes: items[item].minutes,
+                  seconds: items[item].seconds
+                })}
               >
                 <SVG 
                   src={editIcon}

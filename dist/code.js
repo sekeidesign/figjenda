@@ -1,7 +1,7 @@
 (() => {
   // widget-src/code.jsx
   var { widget, ui, showUI, closePlugin, timer } = figma;
-  var { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu, useEffect } = widget;
+  var { AutoLayout, SVG, Text, Frame, useSyncedState, usePropertyMenu, useEffect, waitForTask } = widget;
   var eventListeners = [];
   var dispatch = (action, data) => {
     ui.postMessage({ action, data });
@@ -33,39 +33,60 @@
     const [isLocked, toggleLock] = useSyncedState("isLocked", false);
     const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
     const [themeColor, changeColor] = useSyncedState("themeColor", "#9747FF");
-    function openUI(payload, options = { height: 300, width: 332 }) {
+    const [currentID, updateCurrent] = useSyncedState("currentID", -1);
+    function openUI(mode, data, options = { height: 300, width: 332 }) {
       return new Promise((resolve) => {
         showUI(__html__, options);
         handleEvent("close", () => {
           figma.closePlugin();
+          resolve();
         });
-        handleEvent("add", (data) => {
+        handleEvent("add", (data2) => {
           const lastIndex = items.length - 1;
-          data.id = items[lastIndex] ? items[lastIndex].id + 1 : 1;
+          data2.id = items[lastIndex] ? items[lastIndex].id + 1 : 1;
           let updatedItems = items;
-          updatedItems.push(data);
+          updatedItems.push(data2);
           setItem(updatedItems);
           figma.closePlugin();
+          resolve();
+        });
+        handleEvent("UIReady", () => {
+          if (mode == "edit") {
+            dispatch("edit", data);
+          }
+        });
+        handleEvent("editDone", (data2) => {
+          let updatedItems = items;
+          updatedItems[data2.id - 1] = data2;
+          console.log(updatedItems);
+          setItem(updatedItems);
+          figma.closePlugin();
+          resolve();
         });
       });
     }
     function toTime(mins, secs) {
       return mins * 60 + secs;
     }
-    function syncTimer(time) {
-      setTimeout(() => {
-        console.log("timer done");
-        timer.remaining === 0 ? console.log("Next") : syncTimer(timer.remaining * 1e3);
-      }, time);
+    function playPause() {
+      updateCurrent(0);
+      togglePlay(true);
+      timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds));
     }
-    const localTimer = setTimeout(() => {
-      console.log("timer done");
-    }, 1e3);
-    function play(mins, secs) {
-      console.log("Played");
-      setTimeout(() => {
-        console.log("PLEASE WORK");
-      }, 1e3);
+    function stop() {
+      timer.stop();
+      togglePlay(false);
+      updateCurrent(-1);
+    }
+    function next() {
+      if (isAutoPlay) {
+        timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds));
+        updateCurrent(currentID + 1);
+      } else {
+        timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds));
+        updateCurrent(currentID + 1);
+        timer.pause();
+      }
     }
     const colorIcons = {
       purple: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -94,6 +115,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="rgba(0, 0, 0, .3)" viewBox="0 0 16 16">
   <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
   <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+</svg>
+`;
+    const timeIconBlue = `
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#18A0FB" viewBox="0 0 16 16">
+  <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+</svg>
+`;
+    const checkIcon = `
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="rgba(0, 0, 0, .15)" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
 </svg>
 `;
     const deleteIcon = `
@@ -292,21 +324,7 @@
       padding: 0,
       spacing: 8
     }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: items.length > 0,
-      verticalAlignItems: "center",
-      height: "hug-contents",
-      width: "hug-contents",
-      padding: 12,
-      cornerRadius: 999,
-      stroke: {
-        type: "solid",
-        color: "#000",
-        opacity: 0.3
-      }
-    }, /* @__PURE__ */ figma.widget.h(SVG, {
-      src: stopIcon
-    })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: items.length === 0,
+      hidden: isPlaying === false,
       verticalAlignItems: "center",
       height: "hug-contents",
       width: "hug-contents",
@@ -316,6 +334,9 @@
       stroke: {
         type: "solid",
         color: "#F24822"
+      },
+      onClick: () => {
+        stop();
       }
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: stopIcon
@@ -334,7 +355,7 @@
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: playIcon
     })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: items.length === 0,
+      hidden: items.length === 0 || isPlaying === true,
       verticalAlignItems: "center",
       height: "hug-contents",
       width: "hug-contents",
@@ -342,10 +363,10 @@
       cornerRadius: 999,
       fill: "#18A0FB",
       onClick: () => {
-        play(items[0].minutes, items[0].seconds);
+        playPause();
       }
     }, /* @__PURE__ */ figma.widget.h(SVG, {
-      src: isPlaying ? pauseIcon : playIcon
+      src: playIcon
     })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
       hidden: items.length > 0,
       verticalAlignItems: "center",
@@ -362,7 +383,7 @@
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: skipIcon
     })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: items.length === 0,
+      hidden: isPlaying === false || currentID >= items.length - 1,
       verticalAlignItems: "center",
       height: "hug-contents",
       width: "hug-contents",
@@ -373,6 +394,9 @@
         type: "solid",
         color: "#000",
         opacity: 0.8
+      },
+      onClick: () => {
+        next();
       }
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: skipIcon
@@ -607,32 +631,42 @@
         width: "fill-parent",
         padding: 8,
         spacing: 4,
-        fill: "#FFF",
+        fill: currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF",
         effect: {
           type: "inner-shadow",
           color: "#E5E5E5",
           offset: { x: 0, y: -1 },
           blur: 0
         }
-      }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
+      }, /* @__PURE__ */ figma.widget.h(Frame, {
+        hidden: currentID !== items[item].id - 1,
+        height: 24,
+        width: 4,
+        cornerRadius: 99,
+        fill: {
+          type: "solid",
+          color: "#18A0FB"
+        }
+      }), /* @__PURE__ */ figma.widget.h(AutoLayout, {
         verticalAlignItems: "center",
         height: "hug-contents",
         width: "fill-parent",
         padding: 4,
-        spacing: 4
+        spacing: 8
       }, /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 16
       }, items[item].emoji), /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 14,
         lineHeight: 24,
-        fontWeight: 400,
+        fontWeight: currentID === items[item].id - 1 ? 600 : 400,
         fontFamily: "Inter",
+        textDecoration: currentID > items[item].id - 1 ? "strikethrough" : "none",
         fill: {
           type: "solid",
-          color: "#000",
+          color: `${currentID === items[item].id - 1 ? "#18A0FB" : currentID > items[item].id - 1 ? "#B3B3B3" : "#000"}`,
           opacity: 0.8
         }
-      }, `${items[item].name.slice(0, truncateLength)}${items[item].name.length < truncateLength ? "" : "..."}`)), /* @__PURE__ */ figma.widget.h(AutoLayout, {
+      }, `${items[item].name.slice(0, truncateLength)}${items[item].name.length <= truncateLength ? "" : "..."}`)), /* @__PURE__ */ figma.widget.h(AutoLayout, {
         verticalAlignItems: "center",
         horizontalAlignItems: "end",
         height: "hug-contents",
@@ -645,15 +679,16 @@
         },
         spacing: 4
       }, /* @__PURE__ */ figma.widget.h(SVG, {
-        src: timeIcon
+        src: currentID === items[item].id - 1 ? timeIconBlue : currentID > items[item].id - 1 ? checkIcon : timeIcon
       }), /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 14,
         lineHeight: 24,
         fontWeight: 400,
         fontFamily: "Inter",
+        textDecoration: currentID > items[item].id - 1 ? "strikethrough" : "none",
         fill: {
           type: "solid",
-          color: "#000",
+          color: `${currentID === items[item].id - 1 ? "#18A0FB" : currentID > items[item].id - 1 ? "#B3B3B3" : "#000"}`,
           opacity: 0.8
         }
       }, zeroPad(items[item].minutes) + ":" + zeroPad(items[item].seconds))), /* @__PURE__ */ figma.widget.h(Frame, {
@@ -704,7 +739,7 @@
         horizontalAlignItems: "center",
         height: "hug-contents",
         width: "hug-contents",
-        fill: "#FFF",
+        fill: currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF",
         padding: 6,
         spacing: 0,
         onClick: () => {
@@ -717,10 +752,16 @@
         horizontalAlignItems: "center",
         height: "hug-contents",
         width: "hug-contents",
-        fill: "#FFF",
+        fill: currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF",
         padding: 6,
         spacing: 0,
-        onClick: () => openUI("edit")
+        onClick: () => openUI("edit", {
+          emoji: items[item].emoji,
+          id: items[item].id,
+          name: items[item].name,
+          minutes: items[item].minutes,
+          seconds: items[item].seconds
+        })
       }, /* @__PURE__ */ figma.widget.h(SVG, {
         src: editIcon
       }))));

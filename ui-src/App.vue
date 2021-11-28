@@ -17,7 +17,7 @@
 </script>
 
 <script setup>
-    import { ref, computed } from 'vue';
+    import { ref, computed, onMounted } from 'vue';
     import emojiSet from './emoji.json'
     Object.filter = (obj, predicate) => 
     Object.keys(obj)
@@ -30,6 +30,7 @@
     const itemName = ref('')
     const minutes = ref()
     const seconds = ref()
+    const id = ref(null)
 
     const secsInput = ref(null)
     const minsInput = ref(null)
@@ -53,8 +54,15 @@
         "e"
     ]
 
-    handleEvent('edit', () => {
-        console.log("Editing")
+    const mode = ref('Add')
+
+    handleEvent('edit', (data) => {
+        mode.value = 'Edit'
+        selectedEmoji.value = data.emoji
+        itemName.value = data.name
+        minutes.value = data.minutes
+        seconds.value = data.seconds
+        id.value = data.id
     })
 
     const isValid = computed(() => {
@@ -97,8 +105,8 @@
     }
     function handleSecs(){
         if (seconds.value >= 60) {
-            minutes.value = Math.floor(seconds.value/60)
-            seconds.value = seconds.value % 60
+            minutes.value = Math.floor(seconds.value/60).toFixed(2)
+            seconds.value = (seconds.value % 60).toFixed(2)
         } else if (seconds.value === undefined) {
             seconds.value = 0
         } else {
@@ -120,15 +128,29 @@
         }
         dispatch('add', obj)
     }
+    function saveEdit(){
+        const obj = {
+          id: id.value,
+          name: itemName.value,
+          emoji: selectedEmoji.value,
+          minutes: minutes.value,
+          seconds: seconds.value 
+        }
+        dispatch('editDone', obj)
+    }
 
     function test() {
         console.log(secsInput.value.value)
     }
+
+    onMounted(() => {
+        dispatch('UIReady')
+    })
 </script>    
 
 <template>
     <div style="padding: 0px; position: relative; display: flex; flex-direction: column; height: 300px;">
-        <button @click="test">test</button>
+        <!-- <button @click="test">test</button> -->
         <div class="header">
             <div class="section-title-input">
                 <button class="emoji-input" @click.prevent="removeEmoji">
@@ -167,8 +189,8 @@
                         type="number" 
                         ref="secsInput" 
                         placeholder="00" 
-                        v-model="seconds" 
-                        @blur="handleSecs" 
+                        v-model="seconds"
+                        @blur="handleSecs"
                         @keydown="keydownSecs(secsInput.value, $event)"
                     >
                 </div>
@@ -181,7 +203,8 @@
         </div>
         <div class="actions">
             <button class="primary-btn destructive" @click="dispatch('close')">Cancel</button>
-            <button class="primary-btn" @click="addItem" :disabled="!isValid">Add</button>
+            <button v-if="mode === 'Add'" class="primary-btn" @click="addItem" :disabled="!isValid">Add</button>
+            <button v-else-if="mode === 'Edit'" class="primary-btn" @click="saveEdit" :disabled="!isValid">Done</button>
         </div>
     </div>
 </template>
