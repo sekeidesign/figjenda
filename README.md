@@ -41,6 +41,7 @@ npm run dev:ui
 
 | script                   | description                                                             |
 | ------------------------ | ----------------------------------------------------------------------- |
+| npm run build:watch      | watch-move build for both the widget and iframe code. Use this while in dev |
 | npm run build            | one-off full build of both the iframe and widget                        |
 | npm run build:main       | one-off build of the widget code                                        |
 | npm run build:ui         | one-off build of the iframe code                                        |
