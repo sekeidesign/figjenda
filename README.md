@@ -9,7 +9,7 @@ The widget uses FigJam's built in timer to provide a robust timer experience.
 
 
 ---
-### The rest of this readme is a placeholder
+#### The rest of this readme is in progress
 
 Code organization:
 
@@ -17,21 +17,10 @@ Code organization:
 | -------------------- | ------------------------------------ |
 | ui-src/              | This is where the iframe code lives  |
 | ui-src/index.html    | Main entry point for the iframe code |
-| ui-src/tsconfig.json | tsconfig for the iframe code         |
-| code.tsx             | This is the widget code              |
-| tsconfig.json        | tsconfig for the widget code         |
+| widget-src/code.jsx  | This is the widget code              |
 | dist/                | Built output goes here               |
 
-- The widget code just uses tsc directly like most of our plugin/widget samples
 - The iframe code uses a tool called [vite](https://vitejs.dev/) to bundle everything into a single html file
-
-## Getting started
-
-
-### one-time setup
-1. Make a copy of this folder
-2. Update manifest.json, package.json and package-lock.json where it says `WidgetTemplate`
-3. Install the required dependencies `npm ci`
 
 
 ### importing your widget
