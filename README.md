@@ -5,9 +5,6 @@ The widget uses FigJam's built in timer to provide a robust timer experience.
 
 <img width="815" alt="CleanShot 2021-11-28 at 16 23 46@2x" src="https://user-images.githubusercontent.com/59372630/143786529-446b15bb-71a4-441c-af4b-a7ca2bfa9799.png">
 
-<img width="432" alt="CleanShot 2021-11-28 at 16 25 11@2x" src="https://user-images.githubusercontent.com/59372630/143786577-325455d9-e7f8-45d9-93f0-5049f95e7803.png">
-
-
 ---
 #### The rest of this readme is in progress
 
