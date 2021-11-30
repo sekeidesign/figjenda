@@ -3,12 +3,13 @@
 This FigJam widget allow you to create an agenda or multiple agendas for your workshop in FigJam. 
 The widget uses FigJam's built in timer to provide a robust timer experience.
 
-![CleanShot 2021-11-29 at 18 19 56@2x](https://user-images.githubusercontent.com/59372630/143958102-e877ecf7-a477-4784-8b5f-56e359df1d04.png)
-
-# Start here
+### 🏁 Start here
 
 | [🧪 I am a Beta tester](https://github.com/sekeidesign/figjenda#beta-testing-figjenda) |  [💻 I am a developer](https://github.com/sekeidesign/figjenda/blob/main/README.md#developers) |
 |-----------------------|----------------------|
+
+![CleanShot 2021-11-29 at 18 19 56@2x](https://user-images.githubusercontent.com/59372630/143958102-e877ecf7-a477-4784-8b5f-56e359df1d04.png)
+
 
 ---
 
