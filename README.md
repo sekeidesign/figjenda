@@ -14,7 +14,7 @@ The widget uses FigJam's built in timer to provide a more robust experience.
 
 
 ## Beta testing FigJenda
-##### Follow the instructions below to get FigJenda running in just 4 steps! 🚀
+#### Follow the instructions below to get FigJenda running in just 4 steps! 🚀
 
 🗃 Download the ZIP file containing the codebase by [clicking here](https://github.com/sekeidesign/figjenda/archive/refs/heads/main.zip)
 
