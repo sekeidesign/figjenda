@@ -13,6 +13,26 @@ The widget uses FigJam's built in timer to provide a robust timer experience.
 ---
 
 ## Beta testing FigJenda
+🗃 Download the ZIP file containing the codebase ![CleanShot 2021-11-29 at 18 27 02@2x](https://user-images.githubusercontent.com/59372630/143958905-4dc3cf46-7b3e-4dc0-b74b-bcdd10dffa62.png)
+
+🔍 Unzip the file wherever is convenient, but **you'll need to know where it is to load it into FigJam**
+
+✨ Create a new FigJam file and right click anywhere on the canvas. Select `Import widget from manifest...` ![CleanShot 2021-11-29 at 18 38 09@2x](https://user-images.githubusercontent.com/59372630/143959765-8c12c507-c144-4a02-9579-7eb35191f6fb.png)
+
+🚀 You're ready to try FigJenda! Just right click on the canvas to add it from your widgets! 
+
+⚡️ From here on out you can just copy paste it around to create as many agendas as you want! ![CleanShot 2021-11-29 at 18 53 24@2x](https://user-images.githubusercontent.com/59372630/143961187-55ba1982-9223-4080-b2c0-50ebab6419e7.png)
+![CleanShot 2021-11-29 at 18 56 09@2x](https://user-images.githubusercontent.com/59372630/143961194-6d83c374-2f3d-4a19-8d2f-75b55586610a.png)
+
+Known bugs:
+
+🐛 The numer inputs in the `Add`/`Edit` plugins are a UX nightmare and can feel pretty buggy. You can highlight and delete the number if things get ugly 😩
+![CleanShot 2021-11-29 at 18 57 32@2x](https://user-images.githubusercontent.com/59372630/143961443-20d043ab-2006-44cd-b4da-73841b4005cd.png)
+
+🪲 The widget doesn't know when FigJam's built-in timer is stopped so it will get stuck. Just press stop on the widget to reset it!!![CleanShot 2021-11-29 at 19 02 50](https://user-images.githubusercontent.com/59372630/143961944-27e3acdc-1522-40bc-a3bf-1f099b40c7ef.gif)
+
+
+
 
 
 ---
