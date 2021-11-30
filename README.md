@@ -20,7 +20,7 @@ The widget uses FigJam's built in timer to provide a more robust experience.
 
 🔍 Unzip the file wherever is convenient, but **you'll need to know where it is to load it into FigJam**
 
-✨ Create a new FigJam file and right click anywhere on the canvas. Select `Import widget from manifest...` 
+✨ Create a new FigJam file and right click anywhere on the canvas. Select `Widgets > Development > Import widget from manifest...` 
 
 ![CleanShot 2021-11-29 at 18 38 09@2x](https://user-images.githubusercontent.com/59372630/143959765-8c12c507-c144-4a02-9579-7eb35191f6fb.png)
 
