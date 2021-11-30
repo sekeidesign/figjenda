@@ -88,6 +88,21 @@
         timer.pause();
       }
     }
+    useEffect(() => {
+      waitForTask(new Promise((resolve) => {
+        figma.on("timerstop", () => {
+          stop();
+        });
+      }));
+      waitForTask(new Promise((resolve) => {
+        figma.on("timerdone", () => {
+          if (currentID + 2 < items.length) {
+            next();
+          }
+          updateCurrent(currentID + 1);
+        });
+      }));
+    });
     const colorIcons = {
       purple: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="12" y="12" width="28" height="28" rx="14" fill="#9747FF"/>
@@ -185,14 +200,15 @@
   <path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"/>
 </svg>
 `;
-    const pauseIcon = `
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#FFF" class="bi bi-pause" viewBox="0 0 16 16">
-  <path d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"/>
-</svg>
-`;
     const plusIcon = `
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#FFF" class="bi bi-plus-lg" viewBox="0 0 16 16">
     <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+  </svg>
+`;
+    const resetIcon = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#000" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+    <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+    <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
   </svg>
 `;
     usePropertyMenu([
@@ -324,23 +340,6 @@
       padding: 0,
       spacing: 8
     }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: isPlaying === false,
-      verticalAlignItems: "center",
-      height: "hug-contents",
-      width: "hug-contents",
-      padding: 12,
-      cornerRadius: 999,
-      fill: "#FFF",
-      stroke: {
-        type: "solid",
-        color: "#F24822"
-      },
-      onClick: () => {
-        stop();
-      }
-    }, /* @__PURE__ */ figma.widget.h(SVG, {
-      src: stopIcon
-    })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
       hidden: items.length > 0,
       verticalAlignItems: "center",
       height: "hug-contents",
@@ -367,6 +366,23 @@
       }
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: playIcon
+    })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
+      hidden: isPlaying === false,
+      verticalAlignItems: "center",
+      height: "hug-contents",
+      width: "hug-contents",
+      padding: 12,
+      cornerRadius: 999,
+      fill: "#FFF",
+      stroke: {
+        type: "solid",
+        color: `${currentID < items.length ? "#F24822" : "#000"}`
+      },
+      onClick: () => {
+        stop();
+      }
+    }, /* @__PURE__ */ figma.widget.h(SVG, {
+      src: currentID < items.length ? stopIcon : resetIcon
     })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
       hidden: items.length > 0,
       verticalAlignItems: "center",
