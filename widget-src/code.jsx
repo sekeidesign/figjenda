@@ -120,10 +120,13 @@ function FigJenda() {
     }));
     waitForTask(new Promise((resolve) => {
       figma.on("timerdone", () => {
-        if (currentID + 2 < items.length) {
+        if (currentID + 1 < items.length) {
           next()
+        } else {
+          updateCurrent(currentID + 1)
+          timer.stop()
+          resolve()
         }
-        updateCurrent(currentID + 1)
       })
     }));
   });
@@ -780,6 +783,7 @@ usePropertyMenu(
             >
               <Text 
                 fontSize={16}
+                opacity={currentID > items[item].id - 1 ? 0.25 : 1}
               >
                 {items[item].emoji}
               </Text>
