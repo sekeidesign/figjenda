@@ -96,10 +96,13 @@
       }));
       waitForTask(new Promise((resolve) => {
         figma.on("timerdone", () => {
-          if (currentID + 2 < items.length) {
+          if (currentID + 1 < items.length) {
             next();
+          } else {
+            updateCurrent(currentID + 1);
+            timer.stop();
+            resolve();
           }
-          updateCurrent(currentID + 1);
         });
       }));
     });
