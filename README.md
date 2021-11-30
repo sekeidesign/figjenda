@@ -7,7 +7,7 @@ The widget uses FigJam's built in timer to provide a robust timer experience.
 
 # Start here
 
-| 🧪 I am a Beta tester |  💻 I am a developer |
+| [🧪 I am a Beta tester](https://github.com/sekeidesign/figjenda#beta-testing-figjenda) |  [💻 I am a developer]() |
 |-----------------------|----------------------|
 
 ---
@@ -36,6 +36,7 @@ The widget uses FigJam's built in timer to provide a robust timer experience.
 
 ---
 #### ⚠️ The rest of this readme is a work in progress
+# Developers
 
 Code organization:
 
