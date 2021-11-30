@@ -31,7 +31,7 @@
     ]);
     const [isPlaying, togglePlay] = useSyncedState("isPlaying", false);
     const [isLocked, toggleLock] = useSyncedState("isLocked", false);
-    const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
+    const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", false);
     const [themeColor, changeColor] = useSyncedState("themeColor", "#9747FF");
     const [currentID, updateCurrent] = useSyncedState("currentID", -1);
     function openUI(mode, data, options = { height: 300, width: 332 }) {
