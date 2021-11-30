@@ -32,7 +32,7 @@ The widget uses FigJam's built in timer to provide a more robust experience.
 
 ---
 
-🚀 You're ready to try FigJenda! Just right click on the canvas to add it from your widgets! 
+🚀 You're ready to try FigJenda! Just right click on the canvas to add it from your `Widgets > Development > FigJenda`! 
 
 ![CleanShot 2021-11-29 at 18 53 24@2x](https://user-images.githubusercontent.com/59372630/143961187-55ba1982-9223-4080-b2c0-50ebab6419e7.png)
 
