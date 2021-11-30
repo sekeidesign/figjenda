@@ -51,7 +51,7 @@ The widget uses FigJam's built in timer to provide a more robust experience.
 
 ---
 
-🪲 The widget doesn't know when FigJam's built-in timer is stopped so it will get stuck. Just press stop on the widget to reset it!!!
+🪲 The widget can't listen to FigJam's built-in timer so it will get stuck when it ends. Just press next ⏭ to load the next agenda item, or stop ⏹ on the widget to reset it!!!
 
 [CleanShot 2021-11-29 at 19 02 50](https://user-images.githubusercontent.com/59372630/143961944-27e3acdc-1522-40bc-a3bf-1f099b40c7ef.gif)
 
