@@ -25,9 +25,6 @@ function zeroPad(num){
 
 // ---- WIDGET ----------------
 function FigJenda() {
-  // useEffect(() => {
-  //   waitForTask(new Promise((resolve) => {}));
-  // });
   
   // ---- STATE ----------------
   const [items, setItem] = useSyncedState('items', [
@@ -41,7 +38,7 @@ function FigJenda() {
   ]);
   const [isPlaying, togglePlay] = useSyncedState('isPlaying', false)
   const [isLocked, toggleLock] = useSyncedState('isLocked', false)
-  const [isAutoPlay, toggleAutoPlay] = useSyncedState('isAutoPlay', false)
+  const [isAutoPlay, toggleAutoPlay] = useSyncedState('isAutoPlay', true)
   const [themeColor, changeColor] = useSyncedState('themeColor', "#9747FF")
   const [currentID, updateCurrent] = useSyncedState('currentID', -1)
 
@@ -114,6 +111,22 @@ function FigJenda() {
       timer.pause()
     }
   }
+
+  useEffect(() => {
+    waitForTask(new Promise((resolve) => {
+      figma.on("timerstop", () => {
+         stop()
+       })
+    }));
+    waitForTask(new Promise((resolve) => {
+      figma.on("timerdone", () => {
+        if (currentID + 2 < items.length) {
+          next()
+        }
+        updateCurrent(currentID + 1)
+      })
+    }));
+  });
 
   //figma.on("timerstart", () => console.log(figma.timer.remaining))
   //figma.on("timerpause", () => console.log("Timer paused"))

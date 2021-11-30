@@ -31,7 +31,7 @@
     ]);
     const [isPlaying, togglePlay] = useSyncedState("isPlaying", false);
     const [isLocked, toggleLock] = useSyncedState("isLocked", false);
-    const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", false);
+    const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
     const [themeColor, changeColor] = useSyncedState("themeColor", "#9747FF");
     const [currentID, updateCurrent] = useSyncedState("currentID", -1);
     function openUI(mode, data, options = { height: 300, width: 332 }) {
@@ -88,6 +88,21 @@
         timer.pause();
       }
     }
+    useEffect(() => {
+      waitForTask(new Promise((resolve) => {
+        figma.on("timerstop", () => {
+          stop();
+        });
+      }));
+      waitForTask(new Promise((resolve) => {
+        figma.on("timerdone", () => {
+          if (currentID + 2 < items.length) {
+            next();
+          }
+          updateCurrent(currentID + 1);
+        });
+      }));
+    });
     const colorIcons = {
       purple: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="12" y="12" width="28" height="28" rx="14" fill="#9747FF"/>
