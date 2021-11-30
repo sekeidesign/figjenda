@@ -24,8 +24,7 @@ The widget uses FigJam's built in timer to provide a robust timer experience.
 ⚡️ From here on out you can just copy paste it around to create as many agendas as you want! ![CleanShot 2021-11-29 at 18 53 24@2x](https://user-images.githubusercontent.com/59372630/143961187-55ba1982-9223-4080-b2c0-50ebab6419e7.png)
 ![CleanShot 2021-11-29 at 18 56 09@2x](https://user-images.githubusercontent.com/59372630/143961194-6d83c374-2f3d-4a19-8d2f-75b55586610a.png)
 
-Known bugs:
-
+#### Known bugs:
 🐛 The numer inputs in the `Add`/`Edit` plugins are a UX nightmare and can feel pretty buggy. You can highlight and delete the number if things get ugly 😩
 ![CleanShot 2021-11-29 at 18 57 32@2x](https://user-images.githubusercontent.com/59372630/143961443-20d043ab-2006-44cd-b4da-73841b4005cd.png)
 
