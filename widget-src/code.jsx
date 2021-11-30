@@ -783,6 +783,7 @@ usePropertyMenu(
             >
               <Text 
                 fontSize={16}
+                opacity={currentID > items[item].id - 1 ? 0.25 : 1}
               >
                 {items[item].emoji}
               </Text>

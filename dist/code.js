@@ -100,7 +100,6 @@
             next();
           } else {
             updateCurrent(currentID + 1);
-            timer.stop();
             resolve();
           }
         });
@@ -673,7 +672,8 @@
         padding: 4,
         spacing: 8
       }, /* @__PURE__ */ figma.widget.h(Text, {
-        fontSize: 16
+        fontSize: 16,
+        opacity: currentID > items[item].id - 1 ? 0.25 : 1
       }, items[item].emoji), /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 14,
         lineHeight: 24,
