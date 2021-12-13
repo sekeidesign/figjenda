@@ -20,15 +20,7 @@
     return paddedNum;
   }
   function FigJenda() {
-    const [items, setItem] = useSyncedState("items", [
-      {
-        id: 1,
-        name: "Intros",
-        emoji: "\u{1F44B}",
-        minutes: 5,
-        seconds: 30
-      }
-    ]);
+    const [items, setItem] = useSyncedState("items", []);
     const [isPlaying, togglePlay] = useSyncedState("isPlaying", false);
     const [isLocked, toggleLock] = useSyncedState("isLocked", false);
     const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
@@ -64,13 +56,16 @@
         });
       });
     }
-    function toTime(mins, secs) {
-      return mins * 60 + secs;
+    function toMins(time) {
+      return Math.floor(time / 60);
+    }
+    function toSecs(time) {
+      return time % 60;
     }
     function playPause() {
       updateCurrent(0);
       togglePlay(true);
-      timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds));
+      timer.start(items[currentID + 1].time);
     }
     function stop() {
       timer.stop();
@@ -79,10 +74,10 @@
     }
     function next() {
       if (isAutoPlay) {
-        timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds));
+        timer.start(items[currentID + 1].time);
         updateCurrent(currentID + 1);
       } else {
-        timer.start(toTime(items[currentID + 1].minutes, items[currentID + 1].seconds));
+        timer.start(items[currentID + 1].time);
         updateCurrent(currentID + 1);
         timer.pause();
       }
@@ -161,6 +156,11 @@
   <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
 </svg>
 `;
+    const duplicateIcon = `
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgba(0, 0, 0, .3)" class="bi bi-files" viewBox="0 0 16 16">
+  <path d="M13 0H6a2 2 0 0 0-2 2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 13V4a2 2 0 0 0-2-2H5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1zM3 4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
+</svg>
+`;
     const deleteIconDisabled = `
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgba(0, 0, 0, .1)" viewBox="0 0 16 16">
   <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
@@ -170,6 +170,11 @@
     const editIconDisabled = `
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgba(0, 0, 0, .1)" viewBox="0 0 16 16">
   <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
+</svg>
+`;
+    const duplicateIconDisabled = `
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgba(0, 0, 0, .1)" class="bi bi-files" viewBox="0 0 16 16">
+  <path d="M13 0H6a2 2 0 0 0-2 2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 13V4a2 2 0 0 0-2-2H5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1zM3 4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
 </svg>
 `;
     const unlockIcon = `
@@ -428,7 +433,7 @@
       hidden: items.length === 0 || isLocked,
       verticalAlignItems: "center",
       height: "hug-contents",
-      width: 368,
+      width: 400,
       padding: 12,
       spacing: 10,
       fill: "#FFF",
@@ -644,7 +649,7 @@
         color: "#FFF"
       }
     }, "Add item"))));
-    const truncateLength = 24;
+    const truncateLength = 27;
     let timerList = [];
     for (let item in items) {
       const agendaItem = /* @__PURE__ */ figma.widget.h(AutoLayout, {
@@ -715,7 +720,7 @@
           color: `${currentID === items[item].id - 1 ? "#18A0FB" : currentID > items[item].id - 1 ? "#B3B3B3" : "#000"}`,
           opacity: 0.8
         }
-      }, zeroPad(items[item].minutes) + ":" + zeroPad(items[item].seconds))), /* @__PURE__ */ figma.widget.h(Frame, {
+      }, zeroPad(toMins(items[item].time)) + ":" + zeroPad(toSecs(items[item].time)))), /* @__PURE__ */ figma.widget.h(Frame, {
         height: 12,
         width: 1,
         cornerRadius: 99,
@@ -750,6 +755,15 @@
         spacing: 0
       }, /* @__PURE__ */ figma.widget.h(SVG, {
         src: editIconDisabled
+      })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
+        verticalAlignItems: "center",
+        horizontalAlignItems: "center",
+        height: "hug-contents",
+        width: "hug-contents",
+        padding: 6,
+        spacing: 0
+      }, /* @__PURE__ */ figma.widget.h(SVG, {
+        src: duplicateIconDisabled
       }))), /* @__PURE__ */ figma.widget.h(AutoLayout, {
         hidden: isLocked,
         verticalAlignItems: "center",
@@ -783,11 +797,33 @@
           emoji: items[item].emoji,
           id: items[item].id,
           name: items[item].name,
-          minutes: items[item].minutes,
-          seconds: items[item].seconds
+          time: items[item].time
         })
       }, /* @__PURE__ */ figma.widget.h(SVG, {
         src: editIcon
+      })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
+        verticalAlignItems: "center",
+        horizontalAlignItems: "center",
+        height: "hug-contents",
+        width: "hug-contents",
+        fill: currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF",
+        padding: 6,
+        spacing: 0,
+        onClick: () => {
+          const lastIndex = items.length - 1;
+          const ogIndex = items.findIndex((element) => element.id === items[item].id);
+          const duplicatedItem = {
+            emoji: items[item].emoji,
+            id: items[lastIndex].id + 1,
+            name: items[item].name,
+            time: items[item].time
+          };
+          let updatedItems = items;
+          updatedItems.push(duplicatedItem);
+          setItem(updatedItems);
+        }
+      }, /* @__PURE__ */ figma.widget.h(SVG, {
+        src: duplicateIcon
       }))));
       timerList.push(agendaItem);
     }
@@ -797,7 +833,7 @@
       height: "fill-parent",
       overflow: "hidden",
       padding: 0,
-      width: 368,
+      width: 400,
       height: "hug-contents",
       fill: "#FFFFFF",
       cornerRadius: 12,

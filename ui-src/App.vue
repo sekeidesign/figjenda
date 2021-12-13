@@ -28,31 +28,10 @@
 
     const selectedEmoji = ref('')
     const itemName = ref('')
-    const minutes = ref()
-    const seconds = ref()
+    const time = ref(0)
     const id = ref(null)
 
-    const secsInput = ref(null)
-    const minsInput = ref(null)
     const nameInput = ref(null)
-
-    const nums = [
-        '0',
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '6',
-        '7',
-        '8',
-        '9'
-    ]
-    const illegal = [
-        "-",
-        "+",
-        "e"
-    ]
 
     const mode = ref('Add')
 
@@ -60,13 +39,12 @@
         mode.value = 'Edit'
         selectedEmoji.value = data.emoji
         itemName.value = data.name
-        minutes.value = data.minutes
-        seconds.value = data.seconds
+        time.value = data.time
         id.value = data.id
     })
 
     const isValid = computed(() => {
-        return selectedEmoji.value && itemName.value && (minutes.value || minutes.value === 0) && (seconds.value || seconds.value === 0)
+        return selectedEmoji.value && itemName.value && time.value > 0
     })
 
     function removeEmoji() {
@@ -76,55 +54,21 @@
         selectedEmoji.value = emoji
         nameInput.value.focus()
     }
-    function handleMins(){
-        switch (true) {
-            case (minutes.value < 0): 
-                minutes.value = Math.abs(minutes.value);
-                break;
-            case (minutes.value > 99 || minutes.value < -99): 
-                minutes.value = 99;
-                break;
-        }
+    function toMins(time){
+        return `${time/60 < 10 ? '0' : ''}${Math.floor((time / 60)).toString()}`
     }
-    function keydownMins(input, e){
-        if (illegal.includes(e.key) || (nums.includes(e.key) && input.toString().length === 2)){
-            e.preventDefault()
-        }
+    function toSecs(time){
+        return `${time%60 < 10 ? '0' : ''}${(time % 60).toString()}`
     }
-    function keydownSecs(input, e){
-        if (e.key === "Enter"){
-            secsInput.value.blur()
-        } else if (illegal.includes(e.key) || (nums.includes(e.key) && input.toString().length === 2)){
-            e.preventDefault()
-        }
-    }
-     function focusMins(e){
-         if (e.key === "Enter") {
-             minsInput.value.focus()
-        }
-    }
-    function handleSecs(){
-        if (seconds.value >= 60) {
-            minutes.value = Math.floor(seconds.value/60).toFixed(2)
-            seconds.value = (seconds.value % 60).toFixed(2)
-        } else if (seconds.value === undefined) {
-            seconds.value = 0
-        } else {
-            seconds.value = seconds.value % 60
-        }
-    }
-    function focusSecs(e){
-        if (e.key === "Enter" || (nums.includes(e.key) && minutes.value.toString().length === 2)){
-            secsInput.value.focus()
-        }
+    function modifyTime(type, amt){
+        type === "add" ? time.value = time.value + amt : time.value = time.value - amt
     }
     function addItem(){
         const obj = {
           id: null,
           name: itemName.value,
           emoji: selectedEmoji.value,
-          minutes: minutes.value,
-          seconds: seconds.value 
+          time: time.value
         }
         dispatch('add', obj)
     }
@@ -133,8 +77,7 @@
           id: id.value,
           name: itemName.value,
           emoji: selectedEmoji.value,
-          minutes: minutes.value,
-          seconds: seconds.value 
+          time: time.value 
         }
         dispatch('editDone', obj)
     }
@@ -175,24 +118,33 @@
                     <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
                 </svg>
                 <div class="input time">
-                    <input 
-                        type="number"
-                        ref="minsInput" 
-                        placeholder="00" 
-                        v-model="minutes" 
-                        @blur="handleMins" 
-                        @keyup="focusSecs" 
-                        @keydown="keydownMins(minsInput.value, $event)"
-                    >
-                    :
-                    <input 
-                        type="number" 
-                        ref="secsInput" 
-                        placeholder="00" 
-                        v-model="seconds"
-                        @blur="handleSecs"
-                        @keydown="keydownSecs(secsInput.value, $event)"
-                    >
+                    <div class="time-input">
+                        <button @click="modifyTime('add', 60)" class="mod-time-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                            </svg>
+                        </button>
+                            <span class="time-num">{{`${toMins(time)}`}}</span>
+                        <button @click="modifyTime('subtract', 60)" :disabled="time/60 < 1" class="mod-time-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+                                <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <span style="color: rgba(0,0,0,0.3)">:</span>
+                    <div class="time-input">
+                        <button @click="modifyTime('add', 15)" class="mod-time-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                            </svg>
+                        </button>    
+                            <span class="time-num">{{`${toSecs(time)}`}}</span>
+                        <button @click="modifyTime('subtract', 15)" :disabled="time < 1" class="mod-time-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+                                <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>  
         </div>
@@ -286,6 +238,8 @@
         width: 72px;
         margin-left: 4px;
         position: relative;
+        display: flex;
+        align-items: center;
     }
     .time {
         padding-left: 24px;
@@ -383,5 +337,35 @@
         background-color: transparent;
         border: 1px solid rgba(242, 72, 34, 1);
         color: rgba(242, 72, 34, 1);
+    }
+    .time-input {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .mod-time-btn {
+        background-color: rgba(0, 0, 0, 0.03);
+        border: transparent;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        border-radius: 4px;
+        z-index: 2;
+        &:hover {
+            background: rgba(0,0,0,0.1);
+        }
+        &:disabled{
+            &:hover{
+                background: transparent;
+                cursor: default;
+            }
+        }
+    }
+    .time-num {
+        min-width: 20px;
+        text-align: center;
+        cursor: default;
+        z-index: 1;
     }
 </style>
