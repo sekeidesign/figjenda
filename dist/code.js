@@ -58,7 +58,6 @@
         handleEvent("editDone", (data2) => {
           let updatedItems = items;
           updatedItems[data2.id - 1] = data2;
-          console.log(updatedItems);
           setItem(updatedItems);
           figma.closePlugin();
           resolve();
@@ -92,16 +91,22 @@
       waitForTask(new Promise((resolve) => {
         figma.on("timerstop", () => {
           stop();
+          resolve();
         });
       }));
       waitForTask(new Promise((resolve) => {
         figma.on("timerdone", () => {
-          if (currentID + 1 < items.length) {
-            next();
-          } else {
-            updateCurrent(currentID + 1);
-            resolve();
-          }
+          setTimeout(() => {
+            if (currentID + 1 < items.length) {
+              next();
+              resolve();
+            } else {
+              updateCurrent(currentID + 1);
+              figma.closePlugin();
+              timer.stop();
+              resolve();
+            }
+          }, 100);
         });
       }));
     });

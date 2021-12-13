@@ -74,7 +74,7 @@ function FigJenda() {
       handleEvent('editDone', (data) => {
         let updatedItems = items
         updatedItems[data.id - 1] = data
-        console.log(updatedItems)
+        //console.log(updatedItems)
         setItem(updatedItems)
         figma.closePlugin()
         resolve()
@@ -116,17 +116,25 @@ function FigJenda() {
     waitForTask(new Promise((resolve) => {
       figma.on("timerstop", () => {
          stop()
+         resolve()
        })
     }));
     waitForTask(new Promise((resolve) => {
       figma.on("timerdone", () => {
-        if (currentID + 1 < items.length) {
-          next()
-        } else {
-          updateCurrent(currentID + 1)
-          timer.stop()
-          resolve()
-        }
+        setTimeout(() => {
+          if (currentID + 1 < items.length) {
+            //console.log("Going next", currentID)
+            next()
+            resolve()
+          } else {
+            //console.log('done')
+            updateCurrent(currentID + 1)
+            figma.closePlugin()
+            timer.stop()
+            resolve()
+          }
+
+        }, 100)
       })
     }));
   });
