@@ -659,7 +659,7 @@
         width: "fill-parent",
         padding: 8,
         spacing: 4,
-        fill: currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF",
+        fill: currentID === items.indexOf(items[item]) ? "#EDF5FA" : currentID > items.indexOf(items[item]) ? "#F7F7F7" : "#FFF",
         effect: {
           type: "inner-shadow",
           color: "#E5E5E5",
@@ -683,16 +683,16 @@
         spacing: 8
       }, /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 16,
-        opacity: currentID > items[item].id - 1 ? 0.25 : 1
+        opacity: currentID > items.indexOf(items[item]) ? 0.25 : 1
       }, items[item].emoji), /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 14,
         lineHeight: 24,
-        fontWeight: currentID === items[item].id - 1 ? 600 : 400,
+        fontWeight: currentID === items.indexOf(items[item]) ? 600 : 400,
         fontFamily: "Inter",
-        textDecoration: currentID > items[item].id - 1 ? "strikethrough" : "none",
+        textDecoration: currentID > items.indexOf(items[item]) ? "strikethrough" : "none",
         fill: {
           type: "solid",
-          color: `${currentID === items[item].id - 1 ? "#18A0FB" : currentID > items[item].id - 1 ? "#B3B3B3" : "#000"}`,
+          color: `${currentID === items.indexOf(items[item]) ? "#18A0FB" : currentID > items.indexOf(items[item]) ? "#B3B3B3" : "#000"}`,
           opacity: 0.8
         }
       }, `${items[item].name.slice(0, truncateLength)}${items[item].name.length <= truncateLength ? "" : "..."}`)), /* @__PURE__ */ figma.widget.h(AutoLayout, {
@@ -708,16 +708,16 @@
         },
         spacing: 4
       }, /* @__PURE__ */ figma.widget.h(SVG, {
-        src: currentID === items[item].id - 1 ? timeIconBlue : currentID > items[item].id - 1 ? checkIcon : timeIcon
+        src: currentID === items.indexOf(items[item]) ? timeIconBlue : currentID > items.indexOf(items[item]) ? checkIcon : timeIcon
       }), /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 14,
         lineHeight: 24,
         fontWeight: 400,
         fontFamily: "Inter",
-        textDecoration: currentID > items[item].id - 1 ? "strikethrough" : "none",
+        textDecoration: currentID > items.indexOf(items[item]) ? "strikethrough" : "none",
         fill: {
           type: "solid",
-          color: `${currentID === items[item].id - 1 ? "#18A0FB" : currentID > items[item].id - 1 ? "#B3B3B3" : "#000"}`,
+          color: `${currentID === items.indexOf(items[item]) ? "#18A0FB" : currentID > items.indexOf(items[item]) ? "#B3B3B3" : "#000"}`,
           opacity: 0.8
         }
       }, zeroPad(toMins(items[item].time)) + ":" + zeroPad(toSecs(items[item].time)))), /* @__PURE__ */ figma.widget.h(Frame, {
@@ -777,7 +777,7 @@
         horizontalAlignItems: "center",
         height: "hug-contents",
         width: "hug-contents",
-        fill: currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF",
+        fill: currentID === items.indexOf(items[item]) ? "#EDF5FA" : currentID > items.indexOf(items[item]) ? "#F7F7F7" : "#FFF",
         padding: 6,
         spacing: 0,
         onClick: () => {
@@ -790,7 +790,7 @@
         horizontalAlignItems: "center",
         height: "hug-contents",
         width: "hug-contents",
-        fill: currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF",
+        fill: currentID === items.indexOf(items[item]) ? "#EDF5FA" : currentID > items.indexOf(items[item]) ? "#F7F7F7" : "#FFF",
         padding: 6,
         spacing: 0,
         onClick: () => openUI("edit", {
@@ -806,7 +806,7 @@
         horizontalAlignItems: "center",
         height: "hug-contents",
         width: "hug-contents",
-        fill: currentID === items[item].id - 1 ? "#EDF5FA" : currentID > items[item].id - 1 ? "#F7F7F7" : "#FFF",
+        fill: currentID === items.indexOf(items[item]) ? "#EDF5FA" : currentID > items.indexOf(items[item]) ? "#F7F7F7" : "#FFF",
         padding: 6,
         spacing: 0,
         onClick: () => {
