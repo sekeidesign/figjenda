@@ -1,30 +1,4 @@
 (() => {
-  // widget-src/colorIcons.js
-  var colorIcons = {
-    purple: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="12" y="12" width="28" height="28" rx="14" fill="#9747FF"/>
-          </svg>`,
-    gray: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="12" y="12" width="28" height="28" rx="14" fill="#545454"/>
-        </svg>`,
-    red: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="12" y="12" width="28" height="28" rx="14" fill="#E05A33"/>
-        </svg>`,
-    yellow: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="12" y="12" width="28" height="28" rx="14" fill="#F6C944"/>
-          </svg>`,
-    green: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="12" y="12" width="28" height="28" rx="14" fill="#4DA660"/>
-          </svg>`,
-    blue: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="12" y="12" width="28" height="28" rx="14" fill="#739AF0"/>
-        </svg>`,
-    orange: `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="12" y="12" width="28" height="28" rx="14" fill="#C6803E"/>
-          </svg>`
-  };
-  var colorIcons_default = colorIcons;
-
   // widget-src/uiIcons.js
   var uiIcons = {
     timeIcon: `
@@ -118,46 +92,39 @@
   // widget-src/customPropMenu.js
   var customPropMenu = [
     {
-      tooltip: "Purple",
-      propertyName: "#9747FF",
-      itemType: "action",
-      icon: colorIcons_default.purple
-    },
-    {
-      tooltip: "Gray",
-      propertyName: "#545454",
-      itemType: "action",
-      icon: colorIcons_default.gray
-    },
-    {
-      tooltip: "Red",
-      propertyName: "#E05A33",
-      itemType: "action",
-      icon: colorIcons_default.red
-    },
-    {
-      tooltip: "Yellow",
-      propertyName: "#F6C944",
-      itemType: "action",
-      icon: colorIcons_default.yellow
-    },
-    {
-      tooltip: "Green",
-      propertyName: "#4DA660",
-      itemType: "action",
-      icon: colorIcons_default.green
-    },
-    {
-      tooltip: "Blue",
-      propertyName: "#739AF0",
-      itemType: "action",
-      icon: colorIcons_default.blue
-    },
-    {
-      tooltip: "Orange",
-      propertyName: "#C6803E",
-      itemType: "action",
-      icon: colorIcons_default.orange
+      itemType: "color-selector",
+      tooltip: "Color selector",
+      propertyName: "color-selector",
+      options: [
+        {
+          tooltip: "Purple",
+          option: "#9747FF"
+        },
+        {
+          tooltip: "Gray",
+          option: "#545454"
+        },
+        {
+          tooltip: "Red",
+          option: "#E05A33"
+        },
+        {
+          tooltip: "Yellow",
+          option: "#F6C944"
+        },
+        {
+          tooltip: "Green",
+          option: "#4DA660"
+        },
+        {
+          tooltip: "Blue",
+          option: "#739AF0"
+        },
+        {
+          tooltip: "Orange",
+          option: "#C6803E"
+        }
+      ]
     }
   ];
   var customPropMenu_default = customPropMenu;

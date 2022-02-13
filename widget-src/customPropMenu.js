@@ -2,46 +2,39 @@ import colorIcons from "./colorIcons";
 
 const customPropMenu = [
   {
-    tooltip: "Purple",
-    propertyName: "#9747FF",
-    itemType: "action",
-    icon: colorIcons.purple,
-  },
-  {
-    tooltip: "Gray",
-    propertyName: "#545454",
-    itemType: "action",
-    icon: colorIcons.gray,
-  },
-  {
-    tooltip: "Red",
-    propertyName: "#E05A33",
-    itemType: "action",
-    icon: colorIcons.red,
-  },
-  {
-    tooltip: "Yellow",
-    propertyName: "#F6C944",
-    itemType: "action",
-    icon: colorIcons.yellow,
-  },
-  {
-    tooltip: "Green",
-    propertyName: "#4DA660",
-    itemType: "action",
-    icon: colorIcons.green,
-  },
-  {
-    tooltip: "Blue",
-    propertyName: "#739AF0",
-    itemType: "action",
-    icon: colorIcons.blue,
-  },
-  {
-    tooltip: "Orange",
-    propertyName: "#C6803E",
-    itemType: "action",
-    icon: colorIcons.orange,
+    itemType: "color-selector",
+    tooltip: "Color selector",
+    propertyName: "color-selector",
+    options: [
+      {
+        tooltip: "Purple",
+        option: "#9747FF",
+      },
+      {
+        tooltip: "Gray",
+        option: "#545454",
+      },
+      {
+        tooltip: "Red",
+        option: "#E05A33",
+      },
+      {
+        tooltip: "Yellow",
+        option: "#F6C944",
+      },
+      {
+        tooltip: "Green",
+        option: "#4DA660",
+      },
+      {
+        tooltip: "Blue",
+        option: "#739AF0",
+      },
+      {
+        tooltip: "Orange",
+        option: "#C6803E",
+      },
+    ],
   },
 ];
 
