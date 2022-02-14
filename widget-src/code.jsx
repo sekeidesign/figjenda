@@ -1,6 +1,5 @@
 import colorIcons from "./colorIcons";
 import uiIcons from "./uiIcons";
-import customPropMenu from "./customPropMenu";
 
 const {
   timeIcon,
@@ -57,6 +56,7 @@ function zeroPad(num) {
 
 // ---- WIDGET ----------------
 function FigJenda() {
+  // ---------------------------
   // ---- STATE ----------------
   const [items, setItem] = useSyncedState("items", []);
   const [isPlaying, togglePlay] = useSyncedState("isPlaying", false);
@@ -189,9 +189,51 @@ function FigJenda() {
 `;
 
   // ---- PROPERTY MENU ----------------
-  usePropertyMenu(customPropMenu, (e) => {
-    changeColor(e.propertyName);
-  });
+  usePropertyMenu(
+    [
+      {
+        itemType: "color-selector",
+        propertyName: "color-selector",
+        tooltip: "Color selector",
+        selectedOption: themeColor,
+        options: [
+          {
+            tooltip: "Purple",
+            option: "#9747FF",
+          },
+          {
+            tooltip: "Gray",
+            option: "#545454",
+          },
+          {
+            tooltip: "Red",
+            option: "#E05A33",
+          },
+          {
+            tooltip: "Yellow",
+            option: "#F6C944",
+          },
+          {
+            tooltip: "Green",
+            option: "#4DA660",
+          },
+          {
+            tooltip: "Blue",
+            option: "#739AF0",
+          },
+          {
+            tooltip: "Orange",
+            option: "#C6803E",
+          },
+        ],
+      },
+    ],
+    ({ propertyName, propertyValue }) => {
+      if (propertyName === "color-selector") {
+        changeColor(propertyValue);
+      }
+    }
+  );
   // ---- COMPONENTS ----------------
   const header = (
     <AutoLayout

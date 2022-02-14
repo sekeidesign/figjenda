@@ -89,46 +89,6 @@
   };
   var uiIcons_default = uiIcons;
 
-  // widget-src/customPropMenu.js
-  var customPropMenu = [
-    {
-      itemType: "color-selector",
-      tooltip: "Color selector",
-      propertyName: "color-selector",
-      options: [
-        {
-          tooltip: "Purple",
-          option: "#9747FF"
-        },
-        {
-          tooltip: "Gray",
-          option: "#545454"
-        },
-        {
-          tooltip: "Red",
-          option: "#E05A33"
-        },
-        {
-          tooltip: "Yellow",
-          option: "#F6C944"
-        },
-        {
-          tooltip: "Green",
-          option: "#4DA660"
-        },
-        {
-          tooltip: "Blue",
-          option: "#739AF0"
-        },
-        {
-          tooltip: "Orange",
-          option: "#C6803E"
-        }
-      ]
-    }
-  ];
-  var customPropMenu_default = customPropMenu;
-
   // widget-src/code.jsx
   var {
     timeIcon,
@@ -272,8 +232,47 @@
   <path d="M15.5 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V8.752l-6.267 3.636c-.52.302-1.233-.043-1.233-.696v-2.94l-6.267 3.636C.713 12.69 0 12.345 0 11.692V4.308c0-.653.713-.998 1.233-.696L7.5 7.248v-2.94c0-.653.713-.998 1.233-.696L15 7.248V4a.5.5 0 0 1 .5-.5zM1 4.633v6.734L6.804 8 1 4.633zm7.5 0v6.734L14.304 8 8.5 4.633z"/>
 </svg>
 `;
-    usePropertyMenu(customPropMenu_default, (e) => {
-      changeColor(e.propertyName);
+    usePropertyMenu([
+      {
+        itemType: "color-selector",
+        propertyName: "color-selector",
+        tooltip: "Color selector",
+        selectedOption: themeColor,
+        options: [
+          {
+            tooltip: "Purple",
+            option: "#9747FF"
+          },
+          {
+            tooltip: "Gray",
+            option: "#545454"
+          },
+          {
+            tooltip: "Red",
+            option: "#E05A33"
+          },
+          {
+            tooltip: "Yellow",
+            option: "#F6C944"
+          },
+          {
+            tooltip: "Green",
+            option: "#4DA660"
+          },
+          {
+            tooltip: "Blue",
+            option: "#739AF0"
+          },
+          {
+            tooltip: "Orange",
+            option: "#C6803E"
+          }
+        ]
+      }
+    ], ({ propertyName, propertyValue }) => {
+      if (propertyName === "color-selector") {
+        changeColor(propertyValue);
+      }
     });
     const header = /* @__PURE__ */ figma.widget.h(AutoLayout, {
       verticalAlignItems: "center",
