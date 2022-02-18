@@ -130,7 +130,7 @@ onMounted(() => {
       height: 300px;
     "
   >
-    <button @click="test"></button>
+    <!-- <button @click="test"></button> -->
     <div class="header">
       <div class="section-title-input">
         <button class="emoji-input" @click.prevent="removeEmoji">
