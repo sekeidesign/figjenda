@@ -64,6 +64,10 @@ function FigJenda() {
   const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
   const [themeColor, changeColor] = useSyncedState("themeColor", "#9747FF");
   const [currentID, updateCurrent] = useSyncedState("currentID", -1);
+  const [agendaName, updateAgendaName] = useSyncedState("agendaName", {
+    name: "FigJenda",
+    emoji: "📌",
+  });
 
   function openUI(mode, data, options = { height: 300, width: 332 }) {
     return new Promise((resolve) => {
@@ -90,6 +94,8 @@ function FigJenda() {
       handleEvent("UIReady", () => {
         if (mode == "edit") {
           dispatch("edit", data);
+        } else if (mode == "rename") {
+          dispatch("rename");
         }
       });
 
@@ -99,6 +105,12 @@ function FigJenda() {
         updatedItems[data.id - 1] = data;
         //console.log(updatedItems)
         setItem(updatedItems);
+        figma.closePlugin();
+        resolve();
+      });
+
+      handleEvent("renameDone", (data) => {
+        updateAgendaName(data);
         figma.closePlugin();
         resolve();
       });
@@ -227,10 +239,20 @@ function FigJenda() {
           },
         ],
       },
+      {
+        itemType: "separator",
+      },
+      {
+        itemType: "action",
+        propertyName: "rename",
+        tooltip: "Rename",
+      },
     ],
     ({ propertyName, propertyValue }) => {
       if (propertyName === "color-selector") {
         changeColor(propertyValue);
+      } else if (propertyName === "rename") {
+        openUI("rename");
       }
     }
   );
@@ -257,7 +279,7 @@ function FigJenda() {
         spacing={8}
       >
         <Text fontSize={14} lineHeight={24}>
-          📌
+          {agendaName.emoji}
         </Text>
         <Text
           fontSize={14}
@@ -269,7 +291,7 @@ function FigJenda() {
             color: "#fff",
           }}
         >
-          FigJenda
+          {agendaName.name}
         </Text>
       </AutoLayout>
       <AutoLayout

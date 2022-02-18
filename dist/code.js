@@ -143,6 +143,10 @@
     const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
     const [themeColor, changeColor] = useSyncedState("themeColor", "#9747FF");
     const [currentID, updateCurrent] = useSyncedState("currentID", -1);
+    const [agendaName, updateAgendaName] = useSyncedState("agendaName", {
+      name: "FigJenda",
+      emoji: "\u{1F4CC}"
+    });
     function openUI(mode, data, options = { height: 300, width: 332 }) {
       return new Promise((resolve) => {
         showUI(__html__, options);
@@ -162,12 +166,19 @@
         handleEvent("UIReady", () => {
           if (mode == "edit") {
             dispatch("edit", data);
+          } else if (mode == "rename") {
+            dispatch("rename");
           }
         });
         handleEvent("editDone", (data2) => {
           let updatedItems = items;
           updatedItems[data2.id - 1] = data2;
           setItem(updatedItems);
+          figma.closePlugin();
+          resolve();
+        });
+        handleEvent("renameDone", (data2) => {
+          updateAgendaName(data2);
           figma.closePlugin();
           resolve();
         });
@@ -268,10 +279,20 @@
             option: "#C6803E"
           }
         ]
+      },
+      {
+        itemType: "separator"
+      },
+      {
+        itemType: "action",
+        propertyName: "rename",
+        tooltip: "Rename"
       }
     ], ({ propertyName, propertyValue }) => {
       if (propertyName === "color-selector") {
         changeColor(propertyValue);
+      } else if (propertyName === "rename") {
+        openUI("rename");
       }
     });
     const header = /* @__PURE__ */ figma.widget.h(AutoLayout, {
@@ -295,7 +316,7 @@
     }, /* @__PURE__ */ figma.widget.h(Text, {
       fontSize: 14,
       lineHeight: 24
-    }, "\u{1F4CC}"), /* @__PURE__ */ figma.widget.h(Text, {
+    }, agendaName.emoji), /* @__PURE__ */ figma.widget.h(Text, {
       fontSize: 14,
       lineHeight: 24,
       fontWeight: 600,
@@ -304,7 +325,7 @@
         type: "solid",
         color: "#fff"
       }
-    }, "FigJenda")), /* @__PURE__ */ figma.widget.h(AutoLayout, {
+    }, agendaName.name)), /* @__PURE__ */ figma.widget.h(AutoLayout, {
       verticalAlignItems: "center",
       horizontalAlignItems: "center",
       height: "hug-contents",
