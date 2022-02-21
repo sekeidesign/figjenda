@@ -102,8 +102,11 @@ function FigJenda() {
       // Replace item with edited version from plugin
       handleEvent("editDone", (data) => {
         let updatedItems = items;
-        updatedItems[data.id - 1] = data;
-        //console.log(updatedItems)
+        const index = items.findIndex((item) => {
+          return item.id === data.id;
+        });
+        updatedItems[index] = data;
+        //console.log(updatedItems);
         setItem(updatedItems);
         figma.closePlugin();
         resolve();

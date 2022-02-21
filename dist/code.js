@@ -172,7 +172,10 @@
         });
         handleEvent("editDone", (data2) => {
           let updatedItems = items;
-          updatedItems[data2.id - 1] = data2;
+          const index = items.findIndex((item) => {
+            return item.id === data2.id;
+          });
+          updatedItems[index] = data2;
           setItem(updatedItems);
           figma.closePlugin();
           resolve();
