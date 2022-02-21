@@ -215,7 +215,9 @@ if (props.agendaItem) {
     </div>
   </div>
   <div class="actions">
-    <button class="primary-btn destructive" @click="test">Cancel</button>
+    <button class="primary-btn destructive" @click="done('Cancel')">
+      Cancel
+    </button>
     <button
       v-if="componentMode === 'Add'"
       class="primary-btn"

@@ -10,7 +10,7 @@ const emit = defineEmits(["done"]);
 function done(modeData) {
   //console.log(`Done ${mode}ing`);
   const data = {
-    mode: "Rename",
+    mode: modeData,
     itemName: localAgendaName.value,
     selectedEmoji: localAgendaEmoji.value,
   };
@@ -102,7 +102,9 @@ if (props.agendaInfo) {
     </div>
   </div>
   <div class="actions">
-    <button class="primary-btn destructive" @click="test">Cancel</button>
+    <button class="primary-btn destructive" @click="done('Cancel')">
+      Cancel
+    </button>
     <button
       class="primary-btn"
       @click="done('Rename')"

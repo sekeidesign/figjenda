@@ -56,28 +56,36 @@ handleEvent("rename", (data) => {
 });
 
 function pluginDone(data) {
-  if (data.mode === "Add") {
-    const obj = {
-      id: null,
-      name: data.itemName,
-      emoji: data.selectedEmoji,
-      time: data.time,
-    };
-    dispatch("add", obj);
-  } else if (data.mode === "Edit") {
-    const obj = {
-      id: data.id,
-      name: data.itemName,
-      emoji: data.selectedEmoji,
-      time: data.time,
-    };
-    dispatch("editDone", obj);
-  } else if (data.mode === "Rename") {
-    const obj = {
-      name: data.itemName,
-      emoji: data.selectedEmoji,
-    };
-    dispatch("renameDone", obj);
+  const { mode } = data;
+  let obj = {};
+  switch (true) {
+    case mode === "Add":
+      obj = {
+        id: null,
+        name: data.itemName,
+        emoji: data.selectedEmoji,
+        time: data.time,
+      };
+      dispatch("add", obj);
+      break;
+    case mode === "Edit":
+      obj = {
+        id: data.id,
+        name: data.itemName,
+        emoji: data.selectedEmoji,
+        time: data.time,
+      };
+      dispatch("editDone", obj);
+      break;
+    case mode === "Rename":
+      obj = {
+        name: data.itemName,
+        emoji: data.selectedEmoji,
+      };
+      dispatch("renameDone", obj);
+      break;
+    case mode === "Cancel":
+      dispatch("close");
   }
 }
 
