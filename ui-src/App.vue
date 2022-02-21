@@ -21,6 +21,7 @@ window.onmessage = (event) => {
 import { ref, computed, onMounted } from "vue";
 import emojiSet from "./emoji.json";
 import AddEdit from "./Components/AddEdit.vue";
+import Rename from "./Components/Rename.vue";
 
 const item = ref({
   selectedEmoji: "",
@@ -29,7 +30,12 @@ const item = ref({
   id: null,
 });
 
-const mode = ref();
+const agenda = ref({
+  name: "",
+  emoji: "",
+});
+
+const mode = ref("");
 
 handleEvent("add", () => {
   mode.value = "Add";
@@ -43,8 +49,10 @@ handleEvent("edit", (data) => {
   item.value.id = data.id;
 });
 
-handleEvent("rename", () => {
+handleEvent("rename", (data) => {
   mode.value = "Rename";
+  agenda.value.name = data.agendaName;
+  agenda.value.emoji = data.agendaEmoji;
 });
 
 function pluginDone(data) {
@@ -64,15 +72,13 @@ function pluginDone(data) {
       time: data.time,
     };
     dispatch("editDone", obj);
+  } else if (data.mode === "Rename") {
+    const obj = {
+      name: data.itemName,
+      emoji: data.selectedEmoji,
+    };
+    dispatch("renameDone", obj);
   }
-}
-
-function renameAgenda() {
-  const obj = {
-    name: item.value.itemName,
-    emoji: item.value.selectedEmoji,
-  };
-  dispatch("renameDone", obj);
 }
 
 function test(data) {
@@ -96,7 +102,7 @@ onMounted(() => {
   >
     <!-- <button @click="test"></button> -->
     <AddEdit
-      v-if="mode"
+      v-if="mode === 'Edit' || mode === 'Add'"
       @done="
         (data) => {
           pluginDone(data);
@@ -105,6 +111,14 @@ onMounted(() => {
       :componentMode="mode"
       :agendaItem="item"
     ></AddEdit>
+    <Rename
+      v-else-if="mode === 'Rename'"
+      @done="
+        (data) => {
+          pluginDone(data);
+        }
+      "
+    ></Rename>
   </div>
 </template>
 

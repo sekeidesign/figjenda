@@ -167,7 +167,7 @@
           if (mode === "edit") {
             dispatch("edit", data);
           } else if (mode === "rename") {
-            dispatch("rename");
+            dispatch("rename", data);
           } else if (mode === "add") {
             dispatch("add");
           }
@@ -291,13 +291,16 @@
       {
         itemType: "action",
         propertyName: "rename",
-        tooltip: "Rename"
+        tooltip: "Rename Agenda"
       }
     ], ({ propertyName, propertyValue }) => {
       if (propertyName === "color-selector") {
         changeColor(propertyValue);
       } else if (propertyName === "rename") {
-        openUI("rename");
+        openUI("rename", {
+          agendaName: agendaName.name,
+          agendaEmoji: agendaName.emoji
+        });
       }
     });
     const header = /* @__PURE__ */ figma.widget.h(AutoLayout, {
