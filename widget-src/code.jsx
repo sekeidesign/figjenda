@@ -92,10 +92,12 @@ function FigJenda() {
 
       // Enable plugin to edit existing items
       handleEvent("UIReady", () => {
-        if (mode == "edit") {
+        if (mode === "edit") {
           dispatch("edit", data);
-        } else if (mode == "rename") {
+        } else if (mode === "rename") {
           dispatch("rename");
+        } else if (mode === "add") {
+          dispatch("add");
         }
       });
 
