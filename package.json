@@ -1,5 +1,5 @@
 {
-  "name": "FigJenda",
+  "name": "figjenda",
   "version": "1.0.0",
   "description": "A widget combining a meeting agenda and an interval timer.",
   "scripts": {
