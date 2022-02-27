@@ -164,12 +164,19 @@
           resolve();
         });
         handleEvent("UIReady", () => {
-          if (mode === "edit") {
-            dispatch("edit", data);
-          } else if (mode === "rename") {
-            dispatch("rename", data);
-          } else if (mode === "add") {
-            dispatch("add");
+          switch (true) {
+            case mode === "edit":
+              dispatch("edit", data);
+              break;
+            case mode === "rename":
+              dispatch("rename", data);
+              break;
+            case mode === "add":
+              dispatch("add");
+              break;
+            case mode === "templates":
+              dispatch("templates", { items }, { height: 440, width: 300 });
+              break;
           }
         });
         handleEvent("editDone", (data2) => {
@@ -181,6 +188,7 @@
           setItem(updatedItems);
           figma.closePlugin();
           resolve();
+          console.log(items);
         });
         handleEvent("renameDone", (data2) => {
           updateAgendaName(data2);
@@ -292,15 +300,29 @@
         itemType: "action",
         propertyName: "rename",
         tooltip: "Rename Agenda"
+      },
+      {
+        itemType: "separator"
+      },
+      {
+        itemType: "action",
+        propertyName: "templates",
+        tooltip: "Templates"
       }
     ], ({ propertyName, propertyValue }) => {
-      if (propertyName === "color-selector") {
-        changeColor(propertyValue);
-      } else if (propertyName === "rename") {
-        openUI("rename", {
-          agendaName: agendaName.name,
-          agendaEmoji: agendaName.emoji
-        });
+      switch (true) {
+        case propertyName === "color-selector":
+          changeColor(propertyValue);
+          break;
+        case propertyName === "rename":
+          openUI("rename", {
+            agendaName: agendaName.name,
+            agendaEmoji: agendaName.emoji
+          });
+          break;
+        case propertyName === "templates":
+          openUI("templates", { items }, { height: 440, width: 332 });
+          break;
       }
     });
     const header = /* @__PURE__ */ figma.widget.h(AutoLayout, {
@@ -704,7 +726,7 @@
           blur: 0
         }
       }, /* @__PURE__ */ figma.widget.h(Frame, {
-        hidden: currentID !== items[item].id - 1,
+        hidden: currentID !== items.indexOf(items[item]),
         height: 24,
         width: 4,
         cornerRadius: 99,

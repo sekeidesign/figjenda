@@ -22,6 +22,7 @@ import { ref, computed, onMounted } from "vue";
 import emojiSet from "./emoji.json";
 import AddEdit from "./Components/AddEdit.vue";
 import Rename from "./Components/Rename.vue";
+import TemplateGallery from "./Components/TemplateGallery.vue";
 
 const item = ref({
   selectedEmoji: "",
@@ -39,6 +40,7 @@ const mode = ref("");
 
 handleEvent("add", () => {
   mode.value = "Add";
+  console.log(mode.value);
 });
 
 handleEvent("edit", (data) => {
@@ -53,6 +55,10 @@ handleEvent("rename", (data) => {
   mode.value = "Rename";
   agenda.value.name = data.agendaName;
   agenda.value.emoji = data.agendaEmoji;
+});
+
+handleEvent("templates", () => {
+  mode.value = "Templates";
 });
 
 function pluginDone(data) {
@@ -86,6 +92,7 @@ function pluginDone(data) {
       break;
     case mode === "Cancel":
       dispatch("close");
+      break;
   }
 }
 
@@ -105,7 +112,7 @@ onMounted(() => {
       position: relative;
       display: flex;
       flex-direction: column;
-      height: 300px;
+      height: 100%;
     "
   >
     <!-- <button @click="test"></button> -->
@@ -127,6 +134,7 @@ onMounted(() => {
         }
       "
     ></Rename>
+    <TemplateGallery v-else-if="mode === 'Templates'"></TemplateGallery>
   </div>
 </template>
 
