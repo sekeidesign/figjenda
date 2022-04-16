@@ -893,7 +893,6 @@
       overflow: "hidden",
       padding: 0,
       width: 400,
-      height: "hug-contents",
       fill: "#FFFFFF",
       cornerRadius: 12,
       spacing: 0,
