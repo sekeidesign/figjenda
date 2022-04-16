@@ -42,7 +42,7 @@ let currentItems;
 
 handleEvent('add', () => {
   mode.value = 'Add';
-  console.log(mode.value);
+  //console.log(mode.value);
 });
 
 handleEvent('edit', (data) => {
@@ -60,7 +60,7 @@ handleEvent('rename', (data) => {
 });
 
 handleEvent('templates', (data) => {
-  console.log(data);
+  //console.log(data);
   mode.value = 'Templates';
   currentItems = data.items;
 });
@@ -105,8 +105,12 @@ function templatePreview(template) {
 }
 
 function cancelPreview() {
-  console.log(currentItems);
+  //console.log(currentItems);
   dispatch('cancelPreview', currentItems);
+}
+
+function loadTemplate() {
+  dispatch('loadTemplate');
 }
 
 function test(data) {
@@ -150,13 +154,13 @@ onMounted(() => {
     ></Rename>
     <TemplateGallery
       v-else-if="mode === 'Templates'"
-      :currentItems="items"
       @preview="
         (template) => {
           templatePreview(template);
         }
       "
       @cancelPreview="cancelPreview()"
+      @loadTemplate="loadTemplate()"
     ></TemplateGallery>
   </div>
 </template>

@@ -122,12 +122,16 @@ function FigJenda() {
       });
 
       handleEvent('preview', (template) => {
-        console.log('Received', template);
+        //console.log('Received', template);
         setItem(template.items);
       });
 
       handleEvent('cancelPreview', (items) => {
         setItem(items);
+        figma.closePlugin();
+      });
+
+      handleEvent('loadTemplate', () => {
         figma.closePlugin();
       });
 

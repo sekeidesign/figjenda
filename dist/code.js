@@ -190,11 +190,13 @@
           resolve();
         });
         handleEvent("preview", (template) => {
-          console.log("Received", template);
           setItem(template.items);
         });
         handleEvent("cancelPreview", (items2) => {
           setItem(items2);
+          figma.closePlugin();
+        });
+        handleEvent("loadTemplate", () => {
           figma.closePlugin();
         });
         handleEvent("renameDone", (data2) => {
