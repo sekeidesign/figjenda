@@ -1,13 +1,13 @@
 <script setup>
-import { ref, computed, defineProps } from "vue";
-import emojiSet from "../emoji.json";
+import { ref, computed, defineProps } from 'vue';
+import emojiSet from '../emoji.json';
 
 const props = defineProps({
   componentMode: String,
   agendaItem: Object,
 });
 
-const emit = defineEmits(["done"]);
+const emit = defineEmits(['done']);
 function done(modeData) {
   //console.log(`Done ${mode}ing`);
   const data = {
@@ -17,7 +17,7 @@ function done(modeData) {
     time: localTime.value,
     id: localId.value,
   };
-  emit("done", data);
+  emit('done', data);
 }
 
 Object.filter = (obj, predicate) =>
@@ -26,12 +26,12 @@ Object.filter = (obj, predicate) =>
     .reduce((res, key) => ((res[key] = obj[key]), res), {});
 const emoji3 = Object.filter(
   emojiSet,
-  (emoji) => parseInt(emoji["emoji_version"], 10) <= 3
+  (emoji) => parseInt(emoji['emoji_version'], 10) <= 3
 );
 const emojis = Object.keys(emoji3);
 
-const localEmoji = ref("");
-const localName = ref("");
+const localEmoji = ref('');
+const localName = ref('');
 const localTime = ref(0);
 const localId = ref(null);
 
@@ -46,22 +46,22 @@ const isAgendaValid = computed(() => {
 });
 
 function removeEmoji() {
-  localEmoji.value = "";
+  localEmoji.value = '';
 }
 function setEmoji(emoji) {
   localEmoji.value = emoji;
   nameInput.value.focus();
 }
 function toMins(localTime) {
-  return `${localTime / 60 < 10 ? "0" : ""}${Math.floor(
+  return `${localTime / 60 < 10 ? '0' : ''}${Math.floor(
     localTime / 60
   ).toString()}`;
 }
 function toSecs(localTime) {
-  return `${localTime % 60 < 10 ? "0" : ""}${(localTime % 60).toString()}`;
+  return `${localTime % 60 < 10 ? '0' : ''}${(localTime % 60).toString()}`;
 }
 function modifyTime(type, amt) {
-  type === "add"
+  type === 'add'
     ? (localTime.value = localTime.value + amt)
     : (localTime.value = localTime.value - amt);
 }
@@ -251,6 +251,7 @@ if (props.agendaItem) {
   position: relative;
   display: flex;
   align-items: center;
+  justify-content: start;
   flex-grow: 3;
 }
 .emoji-input {
@@ -264,6 +265,7 @@ if (props.agendaItem) {
   background-color: transparent;
   color: rgba(0, 0, 0, 0.3);
   height: 24px;
+  width: 24px;
   &:hover {
     background: rgba(0, 0, 0, 0.06);
   }

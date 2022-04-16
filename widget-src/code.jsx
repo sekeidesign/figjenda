@@ -1,5 +1,5 @@
-import colorIcons from "./colorIcons";
-import uiIcons from "./uiIcons";
+import colorIcons from './colorIcons';
+import uiIcons from './uiIcons';
 
 const {
   timeIcon,
@@ -58,15 +58,15 @@ function zeroPad(num) {
 function FigJenda() {
   // ---------------------------
   // ---- STATE ----------------
-  const [items, setItem] = useSyncedState("items", []);
-  const [isPlaying, togglePlay] = useSyncedState("isPlaying", false);
-  const [isLocked, toggleLock] = useSyncedState("isLocked", false);
-  const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
-  const [themeColor, changeColor] = useSyncedState("themeColor", "#9747FF");
-  const [currentID, updateCurrent] = useSyncedState("currentID", -1);
-  const [agendaName, updateAgendaName] = useSyncedState("agendaName", {
-    name: "FigJenda",
-    emoji: "📌",
+  const [items, setItem] = useSyncedState('items', []);
+  const [isPlaying, togglePlay] = useSyncedState('isPlaying', false);
+  const [isLocked, toggleLock] = useSyncedState('isLocked', false);
+  const [isAutoPlay, toggleAutoPlay] = useSyncedState('isAutoPlay', true);
+  const [themeColor, changeColor] = useSyncedState('themeColor', '#9747FF');
+  const [currentID, updateCurrent] = useSyncedState('currentID', -1);
+  const [agendaName, updateAgendaName] = useSyncedState('agendaName', {
+    name: 'FigJenda',
+    emoji: '📌',
   });
 
   function openUI(mode, data, options = { height: 300, width: 332 }) {
@@ -74,13 +74,13 @@ function FigJenda() {
       showUI(__html__, options);
 
       // Close the plugin
-      handleEvent("close", () => {
+      handleEvent('close', () => {
         figma.closePlugin();
         resolve();
       });
 
       // Add item to items array from the plugin
-      handleEvent("add", (data) => {
+      handleEvent('add', (data) => {
         const lastIndex = items.length - 1;
         data.id = items[lastIndex] ? items[lastIndex].id + 1 : 1;
         let updatedItems = items;
@@ -91,18 +91,25 @@ function FigJenda() {
       });
 
       // Enable plugin to edit existing items
-      handleEvent("UIReady", () => {
-        if (mode === "edit") {
-          dispatch("edit", data);
-        } else if (mode === "rename") {
-          dispatch("rename", data);
-        } else if (mode === "add") {
-          dispatch("add");
+      handleEvent('UIReady', () => {
+        switch (true) {
+          case mode === 'edit':
+            dispatch('edit', data);
+            break;
+          case mode === 'rename':
+            dispatch('rename', data);
+            break;
+          case mode === 'add':
+            dispatch('add');
+            break;
+          case mode === 'templates':
+            dispatch('templates', { items }, { height: 440, width: 440 });
+            break;
         }
       });
 
       // Replace item with edited version from plugin
-      handleEvent("editDone", (data) => {
+      handleEvent('editDone', (data) => {
         let updatedItems = items;
         const index = items.findIndex((item) => {
           return item.id === data.id;
@@ -114,7 +121,21 @@ function FigJenda() {
         resolve();
       });
 
-      handleEvent("renameDone", (data) => {
+      handleEvent('preview', (template) => {
+        //console.log('Received', template);
+        setItem(template.items);
+      });
+
+      handleEvent('cancelPreview', (items) => {
+        setItem(items);
+        figma.closePlugin();
+      });
+
+      handleEvent('loadTemplate', () => {
+        figma.closePlugin();
+      });
+
+      handleEvent('renameDone', (data) => {
         updateAgendaName(data);
         figma.closePlugin();
         resolve();
@@ -163,7 +184,7 @@ function FigJenda() {
   useEffect(() => {
     waitForTask(
       new Promise((resolve) => {
-        figma.on("timerstop", () => {
+        figma.on('timerstop', () => {
           stop();
           resolve();
         });
@@ -171,7 +192,7 @@ function FigJenda() {
     );
     waitForTask(
       new Promise((resolve) => {
-        figma.on("timerdone", () => {
+        figma.on('timerdone', () => {
           setTimeout(() => {
             if (currentID + 1 < items.length) {
               //console.log("Going next", currentID)
@@ -192,14 +213,14 @@ function FigJenda() {
 
   const stopIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="${
-    items.length > 0 ? "#F24822" : "rgba(0,0,0,.3)"
+    items.length > 0 ? '#F24822' : 'rgba(0,0,0,.3)'
   }" class="bi bi-stop" viewBox="0 0 16 16">
   <path d="M3.5 5A1.5 1.5 0 0 1 5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5zM5 4.5a.5.5 0 0 0-.5.5v6a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5H5z"/>
 </svg>
 `;
   const skipIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="${
-    items.length > 0 ? "rgba(0,0,0,.8)" : "rgba(0,0,0,.3)"
+    items.length > 0 ? 'rgba(0,0,0,.8)' : 'rgba(0,0,0,.3)'
   }" class="bi bi-skip-forward" viewBox="0 0 16 16">
   <path d="M15.5 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V8.752l-6.267 3.636c-.52.302-1.233-.043-1.233-.696v-2.94l-6.267 3.636C.713 12.69 0 12.345 0 11.692V4.308c0-.653.713-.998 1.233-.696L7.5 7.248v-2.94c0-.653.713-.998 1.233-.696L15 7.248V4a.5.5 0 0 1 .5-.5zM1 4.633v6.734L6.804 8 1 4.633zm7.5 0v6.734L14.304 8 8.5 4.633z"/>
 </svg>
@@ -209,58 +230,72 @@ function FigJenda() {
   usePropertyMenu(
     [
       {
-        itemType: "color-selector",
-        propertyName: "color-selector",
-        tooltip: "Color selector",
+        itemType: 'color-selector',
+        propertyName: 'color-selector',
+        tooltip: 'Color selector',
         selectedOption: themeColor,
         options: [
           {
-            tooltip: "Purple",
-            option: "#9747FF",
+            tooltip: 'Purple',
+            option: '#9747FF',
           },
           {
-            tooltip: "Gray",
-            option: "#545454",
+            tooltip: 'Gray',
+            option: '#545454',
           },
           {
-            tooltip: "Red",
-            option: "#E05A33",
+            tooltip: 'Red',
+            option: '#E05A33',
           },
           {
-            tooltip: "Yellow",
-            option: "#F6C944",
+            tooltip: 'Yellow',
+            option: '#F6C944',
           },
           {
-            tooltip: "Green",
-            option: "#4DA660",
+            tooltip: 'Green',
+            option: '#4DA660',
           },
           {
-            tooltip: "Blue",
-            option: "#739AF0",
+            tooltip: 'Blue',
+            option: '#739AF0',
           },
           {
-            tooltip: "Orange",
-            option: "#C6803E",
+            tooltip: 'Orange',
+            option: '#C6803E',
           },
         ],
       },
       {
-        itemType: "separator",
+        itemType: 'separator',
       },
       {
-        itemType: "action",
-        propertyName: "rename",
-        tooltip: "Rename Agenda",
+        itemType: 'action',
+        propertyName: 'rename',
+        tooltip: 'Rename Agenda',
+      },
+      {
+        itemType: 'separator',
+      },
+      {
+        itemType: 'action',
+        propertyName: 'templates',
+        tooltip: 'Templates',
       },
     ],
     ({ propertyName, propertyValue }) => {
-      if (propertyName === "color-selector") {
-        changeColor(propertyValue);
-      } else if (propertyName === "rename") {
-        openUI("rename", {
-          agendaName: agendaName.name,
-          agendaEmoji: agendaName.emoji,
-        });
+      switch (propertyName) {
+        case 'color-selector':
+          changeColor(propertyValue);
+          break;
+        case 'rename':
+          openUI('rename', {
+            agendaName: agendaName.name,
+            agendaEmoji: agendaName.emoji,
+          });
+          break;
+        case 'templates':
+          openUI('templates', items, { height: 440, width: 332 });
+          break;
       }
     }
   );
@@ -295,8 +330,8 @@ function FigJenda() {
           fontWeight={600}
           fontFamily="Inter"
           fill={{
-            type: "solid",
-            color: "#fff",
+            type: 'solid',
+            color: '#fff',
           }}
         >
           {agendaName.name}
@@ -308,7 +343,7 @@ function FigJenda() {
         height="hug-contents"
         width="hug-contents"
         fill={{
-          type: "solid",
+          type: 'solid',
           color: `${themeColor}`,
         }}
         padding={6}
@@ -348,8 +383,8 @@ function FigJenda() {
           fontWeight={400}
           fontFamily="Inter"
           fill={{
-            type: "solid",
-            color: "#000",
+            type: 'solid',
+            color: '#000',
             opacity: 0.8,
           }}
         >
@@ -373,8 +408,8 @@ function FigJenda() {
           padding={12}
           cornerRadius={999}
           fill={{
-            type: "solid",
-            color: "#000",
+            type: 'solid',
+            color: '#000',
             opacity: 0.3,
           }}
         >
@@ -403,8 +438,8 @@ function FigJenda() {
           cornerRadius={999}
           fill="#FFF"
           stroke={{
-            type: "solid",
-            color: `${currentID < items.length ? "#F24822" : "#000"}`,
+            type: 'solid',
+            color: `${currentID < items.length ? '#F24822' : '#000'}`,
           }}
           onClick={() => {
             stop();
@@ -422,8 +457,8 @@ function FigJenda() {
           cornerRadius={999}
           fill="#FFF"
           stroke={{
-            type: "solid",
-            color: "#000",
+            type: 'solid',
+            color: '#000',
             opacity: 0.3,
           }}
         >
@@ -438,8 +473,8 @@ function FigJenda() {
           cornerRadius={999}
           fill="#FFF"
           stroke={{
-            type: "solid",
-            color: "#000",
+            type: 'solid',
+            color: '#000',
             opacity: 0.8,
           }}
           onClick={() => {
@@ -462,12 +497,12 @@ function FigJenda() {
       spacing={10}
       fill="#FFF"
       effect={{
-        type: "inner-shadow",
-        color: "#E5E5E5",
+        type: 'inner-shadow',
+        color: '#E5E5E5',
         offset: { x: 0, y: -1 },
         blur: 0,
       }}
-      onClick={() => openUI("add")}
+      onClick={() => openUI('add')}
     >
       <Text
         fontSize={14}
@@ -475,8 +510,8 @@ function FigJenda() {
         fontWeight={400}
         fontFamily="Inter"
         fill={{
-          type: "solid",
-          color: "#000",
+          type: 'solid',
+          color: '#000',
           opacity: 0.8,
         }}
       >
@@ -489,8 +524,8 @@ function FigJenda() {
         fontFamily="Inter"
         width="fill-parent"
         fill={{
-          type: "solid",
-          color: "#000",
+          type: 'solid',
+          color: '#000',
           opacity: 0.8,
         }}
       >
@@ -501,9 +536,9 @@ function FigJenda() {
 
   function emptyGraphic() {
     const emojis = [
-      { id: 1, emoji: "👋" },
-      { id: 2, emoji: "🚀" },
-      { id: 3, emoji: "⚡️" },
+      { id: 1, emoji: '👋' },
+      { id: 2, emoji: '🚀' },
+      { id: 3, emoji: '⚡️' },
     ];
     let emojiCards = [];
     for (let item of emojis) {
@@ -518,12 +553,12 @@ function FigJenda() {
           spacing={4}
           cornerRadius={6}
           fill={{
-            type: "solid",
-            color: "#FFF",
+            type: 'solid',
+            color: '#FFF',
             opacity: 0.9,
           }}
           effect={{
-            type: "drop-shadow",
+            type: 'drop-shadow',
             color: {
               r: 0.2,
               g: 0.29,
@@ -555,7 +590,7 @@ function FigJenda() {
               width={40}
               cornerRadius={99}
               fill={{
-                type: "solid",
+                type: 'solid',
                 color: `${themeColor}`,
                 opacity: 0.5,
               }}
@@ -565,7 +600,7 @@ function FigJenda() {
               width={96}
               cornerRadius={99}
               fill={{
-                type: "solid",
+                type: 'solid',
                 color: `${themeColor}`,
                 opacity: 0.15,
               }}
@@ -632,7 +667,7 @@ function FigJenda() {
             height={248}
             cornerRadius={999}
             fill={{
-              type: "solid",
+              type: 'solid',
               color: `${themeColor}`,
               opacity: 0.1,
             }}
@@ -665,8 +700,8 @@ function FigJenda() {
             fontFamily="Inter"
             width="hug-contents"
             fill={{
-              type: "solid",
-              color: "#000",
+              type: 'solid',
+              color: '#000',
               opacity: 0.8,
             }}
           >
@@ -679,8 +714,8 @@ function FigJenda() {
             fontFamily="Inter"
             width="hug-contents"
             fill={{
-              type: "solid",
-              color: "#000",
+              type: 'solid',
+              color: '#000',
               opacity: 0.8,
             }}
           >
@@ -701,7 +736,7 @@ function FigJenda() {
           spacing={4}
           fill={themeColor}
           cornerRadius={6}
-          onClick={() => openUI("add")}
+          onClick={() => openUI('add')}
         >
           <SVG src={plusIcon}></SVG>
           <Text
@@ -711,8 +746,8 @@ function FigJenda() {
             fontFamily="Inter"
             width="hug-contents"
             fill={{
-              type: "solid",
-              color: "#FFF",
+              type: 'solid',
+              color: '#FFF',
             }}
           >
             Add item
@@ -735,26 +770,26 @@ function FigJenda() {
         spacing={4}
         fill={
           currentID === items.indexOf(items[item])
-            ? "#EDF5FA"
+            ? '#EDF5FA'
             : currentID > items.indexOf(items[item])
-            ? "#F7F7F7"
-            : "#FFF"
+            ? '#F7F7F7'
+            : '#FFF'
         }
         effect={{
-          type: "inner-shadow",
-          color: "#E5E5E5",
+          type: 'inner-shadow',
+          color: '#E5E5E5',
           offset: { x: 0, y: -1 },
           blur: 0,
         }}
       >
         <Frame
-          hidden={currentID !== items[item].id - 1}
+          hidden={currentID !== items.indexOf(items[item])}
           height={24}
           width={4}
           cornerRadius={99}
           fill={{
-            type: "solid",
-            color: "#18A0FB",
+            type: 'solid',
+            color: '#18A0FB',
           }}
         ></Frame>
         <AutoLayout
@@ -776,22 +811,22 @@ function FigJenda() {
             fontWeight={currentID === items.indexOf(items[item]) ? 600 : 400}
             fontFamily="Inter"
             textDecoration={
-              currentID > items.indexOf(items[item]) ? "strikethrough" : "none"
+              currentID > items.indexOf(items[item]) ? 'strikethrough' : 'none'
             }
             fill={{
-              type: "solid",
+              type: 'solid',
               color: `${
                 currentID === items.indexOf(items[item])
-                  ? "#18A0FB"
+                  ? '#18A0FB'
                   : currentID > items.indexOf(items[item])
-                  ? "#B3B3B3"
-                  : "#000"
+                  ? '#B3B3B3'
+                  : '#000'
               }`,
               opacity: 0.8,
             }}
           >
             {`${items[item].name.slice(0, truncateLength)}${
-              items[item].name.length <= truncateLength ? "" : "..."
+              items[item].name.length <= truncateLength ? '' : '...'
             }`}
           </Text>
         </AutoLayout>
@@ -823,22 +858,22 @@ function FigJenda() {
             fontWeight={400}
             fontFamily="Inter"
             textDecoration={
-              currentID > items.indexOf(items[item]) ? "strikethrough" : "none"
+              currentID > items.indexOf(items[item]) ? 'strikethrough' : 'none'
             }
             fill={{
-              type: "solid",
+              type: 'solid',
               color: `${
                 currentID === items.indexOf(items[item])
-                  ? "#18A0FB"
+                  ? '#18A0FB'
                   : currentID > items.indexOf(items[item])
-                  ? "#B3B3B3"
-                  : "#000"
+                  ? '#B3B3B3'
+                  : '#000'
               }`,
               opacity: 0.8,
             }}
           >
             {zeroPad(toMins(items[item].time)) +
-              ":" +
+              ':' +
               zeroPad(toSecs(items[item].time))}
           </Text>
         </AutoLayout>
@@ -847,8 +882,8 @@ function FigJenda() {
           width={1}
           cornerRadius={99}
           fill={{
-            type: "solid",
-            color: "#000",
+            type: 'solid',
+            color: '#000',
             opacity: 0.06,
           }}
         ></Frame>
@@ -908,10 +943,10 @@ function FigJenda() {
             width="hug-contents"
             fill={
               currentID === items.indexOf(items[item])
-                ? "#EDF5FA"
+                ? '#EDF5FA'
                 : currentID > items.indexOf(items[item])
-                ? "#F7F7F7"
-                : "#FFF"
+                ? '#F7F7F7'
+                : '#FFF'
             }
             padding={6}
             spacing={0}
@@ -928,15 +963,15 @@ function FigJenda() {
             width="hug-contents"
             fill={
               currentID === items.indexOf(items[item])
-                ? "#EDF5FA"
+                ? '#EDF5FA'
                 : currentID > items.indexOf(items[item])
-                ? "#F7F7F7"
-                : "#FFF"
+                ? '#F7F7F7'
+                : '#FFF'
             }
             padding={6}
             spacing={0}
             onClick={() =>
-              openUI("edit", {
+              openUI('edit', {
                 emoji: items[item].emoji,
                 id: items[item].id,
                 name: items[item].name,
@@ -953,10 +988,10 @@ function FigJenda() {
             width="hug-contents"
             fill={
               currentID === items.indexOf(items[item])
-                ? "#EDF5FA"
+                ? '#EDF5FA'
                 : currentID > items.indexOf(items[item])
-                ? "#F7F7F7"
-                : "#FFF"
+                ? '#F7F7F7'
+                : '#FFF'
             }
             padding={6}
             spacing={0}
@@ -991,20 +1026,19 @@ function FigJenda() {
       overflow="hidden"
       padding={0}
       width={400}
-      height="hug-contents"
       fill="#FFFFFF"
       cornerRadius={12}
       spacing={0}
       effect={
         ({
-          type: "drop-shadow",
+          type: 'drop-shadow',
           color: { r: 0, g: 0, b: 0, a: 0.1 },
           offset: { x: 0, y: 5 },
           blur: 24,
           spread: 0,
         },
         {
-          type: "drop-shadow",
+          type: 'drop-shadow',
           color: { r: 0, g: 0, b: 0, a: 0.1 },
           offset: { x: 0, y: 2 },
           blur: 8,

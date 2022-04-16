@@ -164,12 +164,19 @@
           resolve();
         });
         handleEvent("UIReady", () => {
-          if (mode === "edit") {
-            dispatch("edit", data);
-          } else if (mode === "rename") {
-            dispatch("rename", data);
-          } else if (mode === "add") {
-            dispatch("add");
+          switch (true) {
+            case mode === "edit":
+              dispatch("edit", data);
+              break;
+            case mode === "rename":
+              dispatch("rename", data);
+              break;
+            case mode === "add":
+              dispatch("add");
+              break;
+            case mode === "templates":
+              dispatch("templates", { items }, { height: 440, width: 440 });
+              break;
           }
         });
         handleEvent("editDone", (data2) => {
@@ -181,6 +188,16 @@
           setItem(updatedItems);
           figma.closePlugin();
           resolve();
+        });
+        handleEvent("preview", (template) => {
+          setItem(template.items);
+        });
+        handleEvent("cancelPreview", (items2) => {
+          setItem(items2);
+          figma.closePlugin();
+        });
+        handleEvent("loadTemplate", () => {
+          figma.closePlugin();
         });
         handleEvent("renameDone", (data2) => {
           updateAgendaName(data2);
@@ -292,15 +309,29 @@
         itemType: "action",
         propertyName: "rename",
         tooltip: "Rename Agenda"
+      },
+      {
+        itemType: "separator"
+      },
+      {
+        itemType: "action",
+        propertyName: "templates",
+        tooltip: "Templates"
       }
     ], ({ propertyName, propertyValue }) => {
-      if (propertyName === "color-selector") {
-        changeColor(propertyValue);
-      } else if (propertyName === "rename") {
-        openUI("rename", {
-          agendaName: agendaName.name,
-          agendaEmoji: agendaName.emoji
-        });
+      switch (propertyName) {
+        case "color-selector":
+          changeColor(propertyValue);
+          break;
+        case "rename":
+          openUI("rename", {
+            agendaName: agendaName.name,
+            agendaEmoji: agendaName.emoji
+          });
+          break;
+        case "templates":
+          openUI("templates", items, { height: 440, width: 332 });
+          break;
       }
     });
     const header = /* @__PURE__ */ figma.widget.h(AutoLayout, {
@@ -704,7 +735,7 @@
           blur: 0
         }
       }, /* @__PURE__ */ figma.widget.h(Frame, {
-        hidden: currentID !== items[item].id - 1,
+        hidden: currentID !== items.indexOf(items[item]),
         height: 24,
         width: 4,
         cornerRadius: 99,
@@ -871,7 +902,6 @@
       overflow: "hidden",
       padding: 0,
       width: 400,
-      height: "hug-contents",
       fill: "#FFFFFF",
       cornerRadius: 12,
       spacing: 0,
