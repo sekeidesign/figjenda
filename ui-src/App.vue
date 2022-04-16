@@ -1,7 +1,7 @@
 <script>
 const eventListeners = [];
 export const dispatch = (action, data) => {
-  parent.postMessage({ pluginMessage: { action, data } }, "*");
+  parent.postMessage({ pluginMessage: { action, data } }, '*');
 };
 export const handleEvent = (type, callback) => {
   eventListeners.push({ type, callback });
@@ -18,90 +18,103 @@ window.onmessage = (event) => {
 </script>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import emojiSet from "./emoji.json";
-import AddEdit from "./Components/AddEdit.vue";
-import Rename from "./Components/Rename.vue";
-import TemplateGallery from "./Components/TemplateGallery.vue";
+import { ref, computed, onMounted } from 'vue';
+import emojiSet from './emoji.json';
+import AddEdit from './Components/AddEdit.vue';
+import Rename from './Components/Rename.vue';
+import TemplateGallery from './Components/TemplateGallery.vue';
 
 const item = ref({
-  selectedEmoji: "",
-  itemName: "",
+  selectedEmoji: '',
+  itemName: '',
   time: 0,
   id: null,
 });
 
 const agenda = ref({
-  name: "",
-  emoji: "",
+  name: '',
+  emoji: '',
 });
 
-const mode = ref("");
+const mode = ref('');
 
-handleEvent("add", () => {
-  mode.value = "Add";
+let currentItems;
+
+handleEvent('add', () => {
+  mode.value = 'Add';
   console.log(mode.value);
 });
 
-handleEvent("edit", (data) => {
-  mode.value = "Edit";
+handleEvent('edit', (data) => {
+  mode.value = 'Edit';
   item.value.selectedEmoji = data.emoji;
   item.value.itemName = data.name;
   item.value.time = data.time;
   item.value.id = data.id;
 });
 
-handleEvent("rename", (data) => {
-  mode.value = "Rename";
+handleEvent('rename', (data) => {
+  mode.value = 'Rename';
   agenda.value.name = data.agendaName;
   agenda.value.emoji = data.agendaEmoji;
 });
 
-handleEvent("templates", () => {
-  mode.value = "Templates";
+handleEvent('templates', (data) => {
+  console.log(data);
+  mode.value = 'Templates';
+  currentItems = data.items;
 });
 
 function pluginDone(data) {
   const { mode } = data;
   let obj = {};
-  switch (true) {
-    case mode === "Add":
+  switch (mode) {
+    case 'Add':
       obj = {
         id: null,
         name: data.itemName,
         emoji: data.selectedEmoji,
         time: data.time,
       };
-      dispatch("add", obj);
+      dispatch('add', obj);
       break;
-    case mode === "Edit":
+    case 'Edit':
       obj = {
         id: data.id,
         name: data.itemName,
         emoji: data.selectedEmoji,
         time: data.time,
       };
-      dispatch("editDone", obj);
+      dispatch('editDone', obj);
       break;
-    case mode === "Rename":
+    case 'Rename':
       obj = {
         name: data.itemName,
         emoji: data.selectedEmoji,
       };
-      dispatch("renameDone", obj);
+      dispatch('renameDone', obj);
       break;
-    case mode === "Cancel":
-      dispatch("close");
+    case 'Cancel':
+      dispatch('close');
       break;
   }
 }
 
+function templatePreview(template) {
+  dispatch('preview', template);
+}
+
+function cancelPreview() {
+  console.log(currentItems);
+  dispatch('cancelPreview', currentItems);
+}
+
 function test(data) {
-  console.log(data, "test");
+  console.log(data, 'test');
 }
 
 onMounted(() => {
-  dispatch("UIReady");
+  dispatch('UIReady');
 });
 </script>
 
@@ -113,6 +126,7 @@ onMounted(() => {
       display: flex;
       flex-direction: column;
       height: 100%;
+      border-radius: 16px;
     "
   >
     <!-- <button @click="test"></button> -->
@@ -134,11 +148,25 @@ onMounted(() => {
         }
       "
     ></Rename>
-    <TemplateGallery v-else-if="mode === 'Templates'"></TemplateGallery>
+    <TemplateGallery
+      v-else-if="mode === 'Templates'"
+      :currentItems="items"
+      @preview="
+        (template) => {
+          templatePreview(template);
+        }
+      "
+      @cancelPreview="cancelPreview()"
+    ></TemplateGallery>
   </div>
 </template>
 
 <style lang="scss">
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 // Hide stepper arrows on inputs
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
@@ -148,7 +176,7 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type="number"] {
+input[type='number'] {
   border: 1px solid transparent;
   width: 21px;
   font-size: 14px;

@@ -103,7 +103,7 @@ function FigJenda() {
             dispatch('add');
             break;
           case mode === 'templates':
-            dispatch('templates', { items }, { height: 440, width: 300 });
+            dispatch('templates', { items }, { height: 440, width: 440 });
             break;
         }
       });
@@ -119,7 +119,16 @@ function FigJenda() {
         setItem(updatedItems);
         figma.closePlugin();
         resolve();
-        console.log(items);
+      });
+
+      handleEvent('preview', (template) => {
+        console.log('Received', template);
+        setItem(template.items);
+      });
+
+      handleEvent('cancelPreview', (items) => {
+        setItem(items);
+        figma.closePlugin();
       });
 
       handleEvent('renameDone', (data) => {
@@ -270,18 +279,18 @@ function FigJenda() {
       },
     ],
     ({ propertyName, propertyValue }) => {
-      switch (true) {
-        case propertyName === 'color-selector':
+      switch (propertyName) {
+        case 'color-selector':
           changeColor(propertyValue);
           break;
-        case propertyName === 'rename':
+        case 'rename':
           openUI('rename', {
             agendaName: agendaName.name,
             agendaEmoji: agendaName.emoji,
           });
           break;
-        case propertyName === 'templates':
-          openUI('templates', { items }, { height: 440, width: 332 });
+        case 'templates':
+          openUI('templates', items, { height: 440, width: 332 });
           break;
       }
     }
