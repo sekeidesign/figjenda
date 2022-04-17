@@ -186,6 +186,12 @@ onMounted(() => {
 </template>
 
 <style lang="scss">
+@font-face {
+  font-family: 'Roboto Mono';
+  src: local('Roboto Mono'),
+    url(./public/fonts/RobotoMono-Regular.ttf) format('truetype');
+}
+
 *,
 *::before,
 *::after {
