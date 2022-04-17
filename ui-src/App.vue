@@ -23,6 +23,7 @@ import emojiSet from './emoji.json';
 import AddEdit from './Components/AddEdit.vue';
 import Rename from './Components/Rename.vue';
 import TemplateGallery from './Components/TemplateGallery.vue';
+import EmojiPicker from './Components/EmojiPicker.vue';
 
 const item = ref({
   selectedEmoji: '',
@@ -43,6 +44,14 @@ let currentItems;
 handleEvent('add', () => {
   mode.value = 'Add';
   //console.log(mode.value);
+});
+
+handleEvent('emoji', (data) => {
+  mode.value = 'Emoji';
+  item.value.selectedEmoji = data.emoji;
+  item.value.itemName = data.name;
+  item.value.time = data.time;
+  item.value.id = data.id;
 });
 
 handleEvent('edit', (data) => {
@@ -154,6 +163,15 @@ onMounted(() => {
         }
       "
     ></Rename>
+    <EmojiPicker
+      v-else-if="mode === 'Emoji'"
+      :agendaItem="item"
+      @done="
+        (data) => {
+          pluginDone(data);
+        }
+      "
+    ></EmojiPicker>
     <TemplateGallery
       v-else-if="mode === 'Templates'"
       @preview="

@@ -142,7 +142,7 @@
     const [isPlaying, togglePlay] = useSyncedState("isPlaying", false);
     const [isLocked, toggleLock] = useSyncedState("isLocked", false);
     const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
-    const [themeColor, changeColor] = useSyncedState("themeColor", "#9747FF");
+    const [themeColor, changeColor] = useSyncedState("themeColor", "#1E1E1E");
     const [currentID, updateCurrent] = useSyncedState("currentID", -1);
     const [agendaName, updateAgendaName] = useSyncedState("agendaName", {
       name: "FigJenda",
@@ -166,19 +166,21 @@
           resolve();
         });
         handleEvent("UIReady", () => {
-          switch (true) {
-            case mode === "edit":
+          switch (mode) {
+            case "edit":
               dispatch("edit", data);
               break;
-            case mode === "rename":
+            case "rename":
               dispatch("rename", data);
               break;
-            case mode === "add":
+            case "add":
               dispatch("add");
               break;
-            case mode === "templates":
+            case "templates":
               dispatch("templates", { items }, { height: 440, width: 440 });
               break;
+            case "emoji":
+              dispatch("emoji", data);
           }
         });
         handleEvent("editDone", (data2) => {
@@ -280,27 +282,31 @@
           },
           {
             tooltip: "Gray",
-            option: "#545454"
+            option: "#757575"
           },
           {
             tooltip: "Red",
-            option: "#E05A33"
+            option: "#F24822"
           },
           {
             tooltip: "Yellow",
-            option: "#F6C944"
+            option: "#FFCD29"
           },
           {
             tooltip: "Green",
-            option: "#4DA660"
+            option: "#14AE5C"
           },
           {
             tooltip: "Blue",
-            option: "#739AF0"
+            option: "#0D99FF"
           },
           {
             tooltip: "Orange",
-            option: "#C6803E"
+            option: "#FFA629"
+          },
+          {
+            tooltip: "Black",
+            option: "#1E1E1E"
           }
         ]
       },
@@ -341,7 +347,7 @@
       height: "hug-contents",
       width: "fill-parent",
       padding: {
-        left: 8,
+        left: 16,
         right: 8,
         top: 6,
         bottom: 6
@@ -353,7 +359,7 @@
       height: "hug-contents",
       width: "hug-contents",
       padding: 0,
-      spacing: 8
+      spacing: 12
     }, /* @__PURE__ */ figma.widget.h(Text, {
       fontSize: 14,
       lineHeight: 24
@@ -502,7 +508,7 @@
       height: "hug-contents",
       width: "fill-parent",
       hoverStyle: {
-        fill: "3f0f0f0"
+        fill: "#f7f7f7"
       },
       padding: 12,
       spacing: 10,
@@ -760,9 +766,12 @@
         },
         spacing: 0
       }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
-        onClick: (e) => {
-          console.log(e);
-        },
+        onClick: () => openUI("emoji", {
+          emoji: items[item].emoji,
+          id: items[item].id,
+          name: items[item].name,
+          time: items[item].time
+        }),
         padding: 6,
         cornerRadius: 4,
         hoverStyle: {
