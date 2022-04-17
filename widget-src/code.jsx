@@ -31,6 +31,7 @@ const {
   usePropertyMenu,
   useEffect,
   waitForTask,
+  Input,
 } = widget;
 
 const eventListeners = [];
@@ -84,6 +85,7 @@ function FigJenda() {
         const lastIndex = items.length - 1;
         data.id = items[lastIndex] ? items[lastIndex].id + 1 : 1;
         let updatedItems = items;
+        console.log(data);
         updatedItems.push(data);
         setItem(updatedItems);
         figma.closePlugin();
@@ -492,7 +494,10 @@ function FigJenda() {
       hidden={items.length === 0 || isLocked}
       verticalAlignItems="center"
       height="hug-contents"
-      width={400}
+      width="fill-parent"
+      hoverStyle={{
+        fill: '3f0f0f0',
+      }}
       padding={12}
       spacing={10}
       fill="#FFF"
@@ -757,7 +762,7 @@ function FigJenda() {
     </AutoLayout>
   );
 
-  const truncateLength = 27;
+  const truncateLength = 32;
   let timerList = [];
   for (let item in items) {
     const agendaItem = (
@@ -796,39 +801,119 @@ function FigJenda() {
           verticalAlignItems="center"
           height="hug-contents"
           width="fill-parent"
-          padding={4}
-          spacing={8}
+          padding={{
+            top: 4,
+            bottom: 4,
+            left: 0,
+            right: 4,
+          }}
+          spacing={0}
         >
-          <Text
-            fontSize={16}
-            opacity={currentID > items.indexOf(items[item]) ? 0.25 : 1}
-          >
-            {items[item].emoji}
-          </Text>
-          <Text
-            fontSize={14}
-            lineHeight={24}
-            fontWeight={currentID === items.indexOf(items[item]) ? 600 : 400}
-            fontFamily="Inter"
-            textDecoration={
-              currentID > items.indexOf(items[item]) ? 'strikethrough' : 'none'
-            }
-            fill={{
-              type: 'solid',
-              color: `${
-                currentID === items.indexOf(items[item])
-                  ? '#18A0FB'
-                  : currentID > items.indexOf(items[item])
-                  ? '#B3B3B3'
-                  : '#000'
-              }`,
-              opacity: 0.8,
+          <AutoLayout
+            onClick={(e) => {
+              console.log(e);
+            }}
+            padding={6}
+            cornerRadius={4}
+            hoverStyle={{
+              fill: '#f0f0f0',
             }}
           >
-            {`${items[item].name.slice(0, truncateLength)}${
-              items[item].name.length <= truncateLength ? '' : '...'
-            }`}
-          </Text>
+            <Text
+              fontSize={16}
+              opacity={currentID > items.indexOf(items[item]) ? 0.25 : 1}
+            >
+              {items[item].emoji}
+            </Text>
+          </AutoLayout>
+          <AutoLayout
+            onClick={() => {
+              const updatedItems = items.map((el) => {
+                if (el.id === items[item].id && el.name === items[item].name) {
+                  el.editing = true;
+                }
+                return el;
+              });
+              setItem(updatedItems);
+            }}
+            hidden={items[item].editing === true}
+            cornerRadius={4}
+            width="fill-parent"
+            padding={{
+              left: 4,
+              right: 4,
+              top: 2,
+              bottom: 2,
+            }}
+            hoverStyle={{
+              stroke: '#E5E5E5',
+            }}
+          >
+            <Text
+              fontSize={14}
+              lineHeight={24}
+              hidden={items[item].editing === true}
+              fontWeight={currentID === items.indexOf(items[item]) ? 600 : 400}
+              fontFamily="Inter"
+              textDecoration={
+                currentID > items.indexOf(items[item])
+                  ? 'strikethrough'
+                  : 'none'
+              }
+              fill={{
+                type: 'solid',
+                color: `${
+                  currentID === items.indexOf(items[item])
+                    ? '#18A0FB'
+                    : currentID > items.indexOf(items[item])
+                    ? '#B3B3B3'
+                    : '#000'
+                }`,
+                opacity: 0.8,
+              }}
+            >
+              {`${items[item].name.slice(0, truncateLength)}${
+                items[item].name.length <= truncateLength ? '' : '...'
+              }`}
+            </Text>
+          </AutoLayout>
+          <AutoLayout
+            hidden={items[item].editing === false}
+            width="fill-parent"
+          >
+            <Input
+              value={items[item].name}
+              fontSize={14}
+              lineHeight={24}
+              fontWeight={400}
+              fontFamily="Inter"
+              inputFrameProps={{
+                stroke: '#18A0FB',
+                cornerRadius: 4,
+                padding: {
+                  left: 4,
+                  right: 4,
+                  top: 2,
+                  bottom: 2,
+                },
+              }}
+              width="fill-parent"
+              inputBehaviour="truncate"
+              onTextEditEnd={(e) => {
+                const updatedItems = items.map((el) => {
+                  if (
+                    el.id === items[item].id &&
+                    el.name === items[item].name
+                  ) {
+                    el.name = e.characters;
+                    el.editing = false;
+                  }
+                  return el;
+                });
+                setItem(updatedItems);
+              }}
+            ></Input>
+          </AutoLayout>
         </AutoLayout>
         <AutoLayout
           verticalAlignItems="center"
@@ -949,6 +1034,10 @@ function FigJenda() {
                 : '#FFF'
             }
             padding={6}
+            cornerRadius={4}
+            hoverStyle={{
+              fill: '#f0f0f0',
+            }}
             spacing={0}
             onClick={() => {
               setItem(items.filter((thing) => thing.id != items[item].id));
@@ -969,6 +1058,10 @@ function FigJenda() {
                 : '#FFF'
             }
             padding={6}
+            cornerRadius={4}
+            hoverStyle={{
+              fill: '#f0f0f0',
+            }}
             spacing={0}
             onClick={() =>
               openUI('edit', {
@@ -994,6 +1087,10 @@ function FigJenda() {
                 : '#FFF'
             }
             padding={6}
+            cornerRadius={4}
+            hoverStyle={{
+              fill: '#f0f0f0',
+            }}
             spacing={0}
             onClick={() => {
               const lastIndex = items.length - 1;
@@ -1025,7 +1122,7 @@ function FigJenda() {
       height="fill-parent"
       overflow="hidden"
       padding={0}
-      width={400}
+      width={440}
       fill="#FFFFFF"
       cornerRadius={12}
       spacing={0}

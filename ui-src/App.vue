@@ -75,6 +75,7 @@ function pluginDone(data) {
         name: data.itemName,
         emoji: data.selectedEmoji,
         time: data.time,
+        editing: false,
       };
       dispatch('add', obj);
       break;
@@ -84,6 +85,7 @@ function pluginDone(data) {
         name: data.itemName,
         emoji: data.selectedEmoji,
         time: data.time,
+        editing: false,
       };
       dispatch('editDone', obj);
       break;

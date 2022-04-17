@@ -117,7 +117,8 @@
     useSyncedState,
     usePropertyMenu,
     useEffect,
-    waitForTask
+    waitForTask,
+    Input
   } = widget;
   var eventListeners = [];
   var dispatch = (action, data) => {
@@ -158,6 +159,7 @@
           const lastIndex = items.length - 1;
           data2.id = items[lastIndex] ? items[lastIndex].id + 1 : 1;
           let updatedItems = items;
+          console.log(data2);
           updatedItems.push(data2);
           setItem(updatedItems);
           figma.closePlugin();
@@ -498,7 +500,10 @@
       hidden: items.length === 0 || isLocked,
       verticalAlignItems: "center",
       height: "hug-contents",
-      width: 400,
+      width: "fill-parent",
+      hoverStyle: {
+        fill: "3f0f0f0"
+      },
       padding: 12,
       spacing: 10,
       fill: "#FFF",
@@ -717,7 +722,7 @@
         color: "#FFF"
       }
     }, "Add item"))));
-    const truncateLength = 27;
+    const truncateLength = 32;
     let timerList = [];
     for (let item in items) {
       const agendaItem = /* @__PURE__ */ figma.widget.h(AutoLayout, {
@@ -747,14 +752,51 @@
         verticalAlignItems: "center",
         height: "hug-contents",
         width: "fill-parent",
-        padding: 4,
-        spacing: 8
+        padding: {
+          top: 4,
+          bottom: 4,
+          left: 0,
+          right: 4
+        },
+        spacing: 0
+      }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
+        onClick: (e) => {
+          console.log(e);
+        },
+        padding: 6,
+        cornerRadius: 4,
+        hoverStyle: {
+          fill: "#f0f0f0"
+        }
       }, /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 16,
         opacity: currentID > items.indexOf(items[item]) ? 0.25 : 1
-      }, items[item].emoji), /* @__PURE__ */ figma.widget.h(Text, {
+      }, items[item].emoji)), /* @__PURE__ */ figma.widget.h(AutoLayout, {
+        onClick: () => {
+          const updatedItems = items.map((el) => {
+            if (el.id === items[item].id && el.name === items[item].name) {
+              el.editing = true;
+            }
+            return el;
+          });
+          setItem(updatedItems);
+        },
+        hidden: items[item].editing === true,
+        cornerRadius: 4,
+        width: "fill-parent",
+        padding: {
+          left: 4,
+          right: 4,
+          top: 2,
+          bottom: 2
+        },
+        hoverStyle: {
+          stroke: "#E5E5E5"
+        }
+      }, /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 14,
         lineHeight: 24,
+        hidden: items[item].editing === true,
         fontWeight: currentID === items.indexOf(items[item]) ? 600 : 400,
         fontFamily: "Inter",
         textDecoration: currentID > items.indexOf(items[item]) ? "strikethrough" : "none",
@@ -764,6 +806,37 @@
           opacity: 0.8
         }
       }, `${items[item].name.slice(0, truncateLength)}${items[item].name.length <= truncateLength ? "" : "..."}`)), /* @__PURE__ */ figma.widget.h(AutoLayout, {
+        hidden: items[item].editing === false,
+        width: "fill-parent"
+      }, /* @__PURE__ */ figma.widget.h(Input, {
+        value: items[item].name,
+        fontSize: 14,
+        lineHeight: 24,
+        fontWeight: 400,
+        fontFamily: "Inter",
+        inputFrameProps: {
+          stroke: "#18A0FB",
+          cornerRadius: 4,
+          padding: {
+            left: 4,
+            right: 4,
+            top: 2,
+            bottom: 2
+          }
+        },
+        width: "fill-parent",
+        inputBehaviour: "truncate",
+        onTextEditEnd: (e) => {
+          const updatedItems = items.map((el) => {
+            if (el.id === items[item].id && el.name === items[item].name) {
+              el.name = e.characters;
+              el.editing = false;
+            }
+            return el;
+          });
+          setItem(updatedItems);
+        }
+      }))), /* @__PURE__ */ figma.widget.h(AutoLayout, {
         verticalAlignItems: "center",
         horizontalAlignItems: "end",
         height: "hug-contents",
@@ -847,6 +920,10 @@
         width: "hug-contents",
         fill: currentID === items.indexOf(items[item]) ? "#EDF5FA" : currentID > items.indexOf(items[item]) ? "#F7F7F7" : "#FFF",
         padding: 6,
+        cornerRadius: 4,
+        hoverStyle: {
+          fill: "#f0f0f0"
+        },
         spacing: 0,
         onClick: () => {
           setItem(items.filter((thing) => thing.id != items[item].id));
@@ -860,6 +937,10 @@
         width: "hug-contents",
         fill: currentID === items.indexOf(items[item]) ? "#EDF5FA" : currentID > items.indexOf(items[item]) ? "#F7F7F7" : "#FFF",
         padding: 6,
+        cornerRadius: 4,
+        hoverStyle: {
+          fill: "#f0f0f0"
+        },
         spacing: 0,
         onClick: () => openUI("edit", {
           emoji: items[item].emoji,
@@ -876,6 +957,10 @@
         width: "hug-contents",
         fill: currentID === items.indexOf(items[item]) ? "#EDF5FA" : currentID > items.indexOf(items[item]) ? "#F7F7F7" : "#FFF",
         padding: 6,
+        cornerRadius: 4,
+        hoverStyle: {
+          fill: "#f0f0f0"
+        },
         spacing: 0,
         onClick: () => {
           const lastIndex = items.length - 1;
@@ -901,7 +986,7 @@
       height: "fill-parent",
       overflow: "hidden",
       padding: 0,
-      width: 400,
+      width: 440,
       fill: "#FFFFFF",
       cornerRadius: 12,
       spacing: 0,
