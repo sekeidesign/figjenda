@@ -1,12 +1,12 @@
 <script setup>
-import { ref, computed, defineProps } from "vue";
-import emojiSet from "../emoji.json";
+import { ref, computed, defineProps } from 'vue';
+import emojiSet from '../emoji.json';
 
 const props = defineProps({
   agendaInfo: Object,
 });
 
-const emit = defineEmits(["done"]);
+const emit = defineEmits(['done']);
 function done(modeData) {
   //console.log(`Done ${mode}ing`);
   const data = {
@@ -14,7 +14,7 @@ function done(modeData) {
     itemName: localAgendaName.value,
     selectedEmoji: localAgendaEmoji.value,
   };
-  emit("done", data);
+  emit('done', data);
 }
 
 Object.filter = (obj, predicate) =>
@@ -23,12 +23,12 @@ Object.filter = (obj, predicate) =>
     .reduce((res, key) => ((res[key] = obj[key]), res), {});
 const emoji3 = Object.filter(
   emojiSet,
-  (emoji) => parseInt(emoji["emoji_version"], 10) <= 3
+  (emoji) => parseInt(emoji['emoji_version'], 10) <= 3
 );
 const emojis = Object.keys(emoji3);
 
-const localAgendaName = ref("");
-const localAgendaEmoji = ref("");
+const localAgendaName = ref('');
+const localAgendaEmoji = ref('');
 
 const nameInput = ref(null);
 
@@ -37,7 +37,7 @@ const isAgendaValid = computed(() => {
 });
 
 function removeEmoji() {
-  localAgendaEmoji.value = "";
+  localAgendaEmoji.value = '';
 }
 function setEmoji(emoji) {
   localAgendaEmoji.value = emoji;
@@ -173,20 +173,6 @@ if (props.agendaInfo) {
   position: relative;
   display: flex;
   align-items: center;
-}
-.time {
-  padding-left: 24px;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  &:hover {
-    border: 1px solid transparent;
-  }
-  &:focus-visible {
-    border-radius: 2px;
-    border: 1px solid transparent;
-    outline: transparent !important;
-  }
 }
 .bi-clock {
   position: absolute;

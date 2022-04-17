@@ -129,7 +129,21 @@ if (props.agendaItem) {
       </svg>
 
       <div class="input time">
-        <!-- <div class="time-input">
+        <div class="time-input">
+          <button @click="modifyTime('add', 60)" class="mod-time-btn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="12"
+              height="12"
+              fill="currentColor"
+              class="bi bi-plus"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+              />
+            </svg>
+          </button>
           <span class="time-num">{{ `${toMins(localTime)}` }}</span>
           <button
             @click="modifyTime('subtract', 60)"
@@ -185,7 +199,7 @@ if (props.agendaItem) {
               />
             </svg>
           </button>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
@@ -233,6 +247,7 @@ if (props.agendaItem) {
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05), 0px 5px 16px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
+  width: 332px;
   flex-shrink: 0;
 }
 .section-title-input {
@@ -287,13 +302,13 @@ if (props.agendaItem) {
   align-items: center;
 }
 .time {
-  padding-left: 24px;
-  font-size: 14px;
+  padding-left: 16px !important;
+  font-size: 12px !important;
   font-family: 'Roboto Mono', monospace;
   display: flex;
   align-items: center;
   &:hover {
-    border: 1px solid transparent;
+    border: 1px solid transparent !important;
   }
   &:focus-visible {
     border-radius: 2px;
@@ -303,7 +318,7 @@ if (props.agendaItem) {
 }
 .bi-clock {
   position: absolute;
-  left: 8px;
+  left: 2px !important;
   top: 10px;
 }
 .emoji-list-wrap {
@@ -409,7 +424,8 @@ if (props.agendaItem) {
   }
 }
 .time-num {
-  min-width: 20px;
+  min-width: 16px;
+  font-size: 12px;
   text-align: center;
   cursor: default;
   z-index: 1;
