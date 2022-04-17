@@ -1,9 +1,15 @@
+import silly8s from './Public/silly8s.png';
+import tenforten from './Public/tenforten.png';
+import actionboard from './Public/actionboard.png';
+import brainwriting from './Public/brainwriting.png';
+import sailboat from './Public/sailboat.png';
+
 const templates = [
   {
     templateName: 'Silly 8s',
     templateCategory: 'Exercise',
     id: 1,
-    imageURL: './silly8s.png',
+    imageURL: silly8s,
     docsURL:
       'https://figjenda.notion.site/Silly-8s-e4e019788d68437cb4ac1e776c261a8e',
     items: [
@@ -21,7 +27,7 @@ const templates = [
     templateName: 'Sailboat exercise',
     templateCategory: 'Exercise',
     id: 2,
-    imageURL: './silly8s.png',
+    imageURL: sailboat,
     docsURL:
       'https://figjenda.notion.site/Sailboat-exercise-7c046f420b194db9b8e4bec21df52cd5',
     items: [
@@ -46,7 +52,7 @@ const templates = [
     templateName: '10 for 10',
     templateCategory: 'Exercise',
     id: 3,
-    imageURL: './silly8s.png',
+    imageURL: tenforten,
     docsURL:
       'https://figjenda.notion.site/10-for-10-c30fb02dce1b4b71b4704da0c48f17fe',
     items: [
@@ -70,7 +76,7 @@ const templates = [
     templateName: 'Brainwriting',
     templateCategory: 'Exercise',
     id: 4,
-    imageURL: './silly8s.png',
+    imageURL: brainwriting,
     docsURL:
       'https://figjenda.notion.site/Brainwriting-d5eb6cf5c7ca43e5aecafad056a5a5f9',
     items: [
@@ -110,7 +116,7 @@ const templates = [
     templateName: 'Action board',
     templateCategory: 'Exercise',
     id: 5,
-    imageURL: './silly8s.png',
+    imageURL: actionboard,
     docsURL:
       'https://figjenda.notion.site/Action-board-80486ac23e33465095984fca833674d7',
     items: [
