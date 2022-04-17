@@ -32,6 +32,7 @@ const {
   useEffect,
   waitForTask,
   Input,
+  useStickable,
 } = widget;
 
 const eventListeners = [];
@@ -70,6 +71,8 @@ function FigJenda() {
     emoji: '📌',
   });
 
+  useStickable();
+
   function openUI(mode, data, options = { height: 300, width: 332 }) {
     return new Promise((resolve) => {
       showUI(__html__, options);
@@ -101,8 +104,8 @@ function FigJenda() {
           case 'rename':
             dispatch('rename', data);
             break;
-          case 'add':
-            dispatch('add');
+          case 'editTime':
+            dispatch('editTime', data);
             break;
           case 'templates':
             dispatch('templates', { items }, { height: 440, width: 440 });
@@ -302,7 +305,7 @@ function FigJenda() {
           });
           break;
         case 'templates':
-          openUI('templates', items, { height: 440, width: 332 });
+          openUI('templates', items, { height: 440, width: 440 });
           break;
       }
     }
@@ -817,12 +820,16 @@ function FigJenda() {
         >
           <AutoLayout
             onClick={() =>
-              openUI('emoji', {
-                emoji: items[item].emoji,
-                id: items[item].id,
-                name: items[item].name,
-                time: items[item].time,
-              })
+              openUI(
+                'emoji',
+                {
+                  emoji: items[item].emoji,
+                  id: items[item].id,
+                  name: items[item].name,
+                  time: items[item].time,
+                },
+                { height: 240 }
+              )
             }
             padding={6}
             cornerRadius={4}
@@ -837,69 +844,11 @@ function FigJenda() {
               {items[item].emoji}
             </Text>
           </AutoLayout>
-          <AutoLayout
-            onClick={() => {
-              const updatedItems = items.map((el) => {
-                if (el.id === items[item].id && el.name === items[item].name) {
-                  el.editing = true;
-                }
-                return el;
-              });
-              setItem(updatedItems);
-            }}
-            hidden={items[item].editing === true}
-            cornerRadius={4}
-            width="fill-parent"
-            padding={{
-              left: 4,
-              right: 4,
-              top: 2,
-              bottom: 2,
-            }}
-            hoverStyle={{
-              stroke: '#E5E5E5',
-            }}
-          >
-            <Text
-              fontSize={14}
-              lineHeight={24}
-              hidden={items[item].editing === true}
-              fontWeight={currentID === items.indexOf(items[item]) ? 600 : 400}
-              fontFamily="Inter"
-              textDecoration={
-                currentID > items.indexOf(items[item])
-                  ? 'strikethrough'
-                  : 'none'
-              }
-              fill={{
-                type: 'solid',
-                color: `${
-                  currentID === items.indexOf(items[item])
-                    ? '#18A0FB'
-                    : currentID > items.indexOf(items[item])
-                    ? '#B3B3B3'
-                    : '#000'
-                }`,
-                opacity: 0.8,
-              }}
-            >
-              {`${items[item].name.slice(0, truncateLength)}${
-                items[item].name.length <= truncateLength ? '' : '...'
-              }`}
-            </Text>
-          </AutoLayout>
-          <AutoLayout
-            hidden={items[item].editing === false || !items[item].editing}
-            width="fill-parent"
-          >
+          <AutoLayout cornerRadius={4} width="fill-parent">
             <Input
               value={items[item].name}
               fontSize={14}
-              lineHeight={24}
-              fontWeight={400}
-              fontFamily="Inter"
               inputFrameProps={{
-                stroke: '#18A0FB',
                 cornerRadius: 4,
                 padding: {
                   left: 4,
@@ -907,7 +856,13 @@ function FigJenda() {
                   top: 2,
                   bottom: 2,
                 },
+                hoverStyle: {
+                  stroke: '#E5E5E5',
+                },
               }}
+              lineHeight={24}
+              fontWeight={400}
+              fontFamily="Inter"
               width="fill-parent"
               inputBehaviour="truncate"
               onTextEditEnd={(e) => {
@@ -937,7 +892,23 @@ function FigJenda() {
             top: 4,
             bottom: 4,
           }}
+          cornerRadius={4}
           spacing={4}
+          onClick={() =>
+            openUI(
+              'editTime',
+              {
+                emoji: items[item].emoji,
+                id: items[item].id,
+                name: items[item].name,
+                time: items[item].time,
+              },
+              { height: 171, width: 200 }
+            )
+          }
+          hoverStyle={{
+            stroke: '#e5e5e5',
+          }}
         >
           <SVG
             src={

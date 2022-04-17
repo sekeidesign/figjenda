@@ -7,7 +7,7 @@ import pomodoro from './public/pomodoro.png';
 
 const templates = [
   {
-    templateName: 'Silly 8s',
+    templateName: '🎱 Silly 8s',
     templateCategory: 'Exercise',
     id: 1,
     imageURL: silly8s,
@@ -25,7 +25,7 @@ const templates = [
     ],
   },
   {
-    templateName: 'Sailboat exercise',
+    templateName: '⛵️ Sailboat exercise',
     templateCategory: 'Exercise',
     id: 2,
     imageURL: sailboat,
@@ -70,7 +70,7 @@ const templates = [
     ],
   },
   {
-    templateName: 'Pomodoro',
+    templateName: '🍅 Pomodoro',
     templateCategory: 'Exercise',
     id: 3,
     imageURL: pomodoro,
@@ -88,7 +88,7 @@ const templates = [
     ],
   },
   {
-    templateName: '10 for 10',
+    templateName: '⏳ 10 for 10',
     templateCategory: 'Exercise',
     id: 4,
     imageURL: tenforten,
@@ -114,7 +114,7 @@ const templates = [
     ],
   },
   {
-    templateName: 'Brainwriting',
+    templateName: '🧠 Brainwriting',
     templateCategory: 'Exercise',
     id: 5,
     imageURL: brainwriting,
@@ -159,7 +159,7 @@ const templates = [
     ],
   },
   {
-    templateName: 'Action board',
+    templateName: '💫 Action board',
     templateCategory: 'Exercise',
     id: 6,
     imageURL: actionboard,

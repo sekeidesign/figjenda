@@ -93,7 +93,7 @@ import templates from '../Templates.js';
       <button
         class="primary-btn"
         @click="loadTemplate()"
-        :disabled="!selectedTemplate"
+        :disabled="!selectedTemplate.items"
       >
         Load template
       </button>
@@ -101,13 +101,14 @@ import templates from '../Templates.js';
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .templates-wrap {
   height: 100%;
   max-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  background-color: rgba(0, 0, 0, 0.03);
 }
 .templates-container {
   width: 100%;
@@ -115,17 +116,18 @@ import templates from '../Templates.js';
   overflow-y: scroll;
   display: flex;
   flex-wrap: wrap;
-  row-gap: 1rem;
-  padding: 0.5rem;
+  row-gap: 2px;
   align-items: start;
+  justify-content: space-between;
+  padding: 2px;
 }
 .template-item {
-  width: 50%;
+  width: calc(50% - 1px);
   padding: 0.5rem;
-  border-radius: 0.5rem;
   cursor: pointer;
+  background-color: white;
   &:hover {
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: rgba(0, 0, 0, 0);
   }
   &:hover .template-item-cover {
     border-color: rgba(0, 0, 0, 0.3);
@@ -149,8 +151,8 @@ import templates from '../Templates.js';
 .template-item-cover {
   background-color: rgba(0, 0, 0, 0.02);
   border: 1px solid rgba(0, 0, 0, 0);
-  border-radius: 0.25rem;
-  height: 6rem;
+  border-radius: 0.75rem;
+  height: 8rem;
   margin-bottom: 0.5rem;
   overflow: hidden;
   width: 100%;
@@ -159,8 +161,8 @@ import templates from '../Templates.js';
   position: relative;
 }
 .template-img {
-  width: 100%;
-  height: 100%;
+  width: 110%;
+  height: 110%;
   object-fit: cover;
   object-position: top;
 }
