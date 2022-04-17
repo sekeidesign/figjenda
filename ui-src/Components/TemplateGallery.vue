@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue';
-import silly8s from '../Public/silly8s.png';
 
 const selectedTemplate = ref({ templateName: '', id: '' });
 
@@ -32,7 +31,6 @@ import templates from '../Templates.js';
 
 <template>
   <div class="templates-wrap">
-    <div>Filters</div>
     <div class="templates-container">
       <div
         v-for="item in templates"
@@ -46,7 +44,7 @@ import templates from '../Templates.js';
         @click="preview(item)"
       >
         <div class="template-item-cover">
-          <img class="template-img" :src="silly8s" />
+          <img class="template-img" :src="item.imageURL" />
           <div
             class="template-category"
             :class="{
@@ -124,13 +122,18 @@ import templates from '../Templates.js';
 .template-item {
   width: 50%;
   padding: 0.5rem;
+  border-radius: 0.5rem;
   cursor: pointer;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
   &:hover .template-item-cover {
     border-color: rgba(0, 0, 0, 0.3);
     background-color: rgba(0, 0, 0, 0.06);
   }
 }
 .selected {
+  background-color: rgba(0, 0, 0, 0.03);
   & .template-title {
     color: rgba(24, 160, 251, 1);
   }
@@ -146,12 +149,12 @@ import templates from '../Templates.js';
 .template-item-cover {
   background-color: rgba(0, 0, 0, 0.02);
   border: 1px solid rgba(0, 0, 0, 0);
-  border-radius: 0.5rem;
-  height: 5rem;
+  border-radius: 0.25rem;
+  height: 6rem;
   margin-bottom: 0.5rem;
   overflow: hidden;
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem;
   padding-bottom: 0;
   position: relative;
 }
@@ -162,6 +165,7 @@ import templates from '../Templates.js';
   object-position: top;
 }
 .template-category {
+  display: none;
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
