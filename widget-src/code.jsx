@@ -889,7 +889,7 @@ function FigJenda() {
             </Text>
           </AutoLayout>
           <AutoLayout
-            hidden={items[item].editing === false}
+            hidden={items[item].editing === false || !items[item].editing}
             width="fill-parent"
           >
             <Input

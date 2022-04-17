@@ -815,7 +815,7 @@
           opacity: 0.8
         }
       }, `${items[item].name.slice(0, truncateLength)}${items[item].name.length <= truncateLength ? "" : "..."}`)), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-        hidden: items[item].editing === false,
+        hidden: items[item].editing === false || !items[item].editing,
         width: "fill-parent"
       }, /* @__PURE__ */ figma.widget.h(Input, {
         value: items[item].name,
