@@ -19,7 +19,6 @@ window.onmessage = (event) => {
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import emojiSet from './emoji.json';
 import AddEdit from './Components/AddEdit.vue';
 import Rename from './Components/Rename.vue';
 import TemplateGallery from './Components/TemplateGallery.vue';
@@ -56,6 +55,14 @@ handleEvent('emoji', (data) => {
 
 handleEvent('edit', (data) => {
   mode.value = 'Edit';
+  item.value.selectedEmoji = data.emoji;
+  item.value.itemName = data.name;
+  item.value.time = data.time;
+  item.value.id = data.id;
+});
+
+handleEvent('editTime', (data) => {
+  mode.value = 'EditTime';
   item.value.selectedEmoji = data.emoji;
   item.value.itemName = data.name;
   item.value.time = data.time;
@@ -146,7 +153,7 @@ onMounted(() => {
   >
     <!-- <button @click="test"></button> -->
     <AddEdit
-      v-if="mode === 'Edit' || mode === 'Add'"
+      v-if="mode === 'EditTime'"
       @done="
         (data) => {
           pluginDone(data);

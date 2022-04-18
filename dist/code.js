@@ -118,7 +118,8 @@
     usePropertyMenu,
     useEffect,
     waitForTask,
-    Input
+    Input,
+    useStickable
   } = widget;
   var eventListeners = [];
   var dispatch = (action, data) => {
@@ -139,6 +140,7 @@
   }
   function FigJenda() {
     const [items, setItem] = useSyncedState("items", []);
+    const invalidItems = items.filter((el) => el.time < 1);
     const [isPlaying, togglePlay] = useSyncedState("isPlaying", false);
     const [isLocked, toggleLock] = useSyncedState("isLocked", false);
     const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
@@ -148,20 +150,11 @@
       name: "FigJenda",
       emoji: "\u{1F4CC}"
     });
+    useStickable();
     function openUI(mode, data, options = { height: 300, width: 332 }) {
       return new Promise((resolve) => {
         showUI(__html__, options);
         handleEvent("close", () => {
-          figma.closePlugin();
-          resolve();
-        });
-        handleEvent("add", (data2) => {
-          const lastIndex = items.length - 1;
-          data2.id = items[lastIndex] ? items[lastIndex].id + 1 : 1;
-          let updatedItems = items;
-          console.log(data2);
-          updatedItems.push(data2);
-          setItem(updatedItems);
           figma.closePlugin();
           resolve();
         });
@@ -173,8 +166,8 @@
             case "rename":
               dispatch("rename", data);
               break;
-            case "add":
-              dispatch("add");
+            case "editTime":
+              dispatch("editTime", data);
               break;
             case "templates":
               dispatch("templates", { items }, { height: 440, width: 440 });
@@ -210,6 +203,18 @@
         });
       });
     }
+    const newItem = () => {
+      const lastIndex = items.length - 1;
+      const itemTemplate = {
+        itemName: "",
+        emoji: "\u{1F4CC}",
+        time: 0,
+        id: items[lastIndex] ? items[lastIndex].id + 1 : 1
+      };
+      let updatedItems = items;
+      updatedItems.push(itemTemplate);
+      setItem(updatedItems);
+    };
     function toMins(time) {
       return Math.floor(time / 60);
     }
@@ -338,7 +343,7 @@
           });
           break;
         case "templates":
-          openUI("templates", items, { height: 440, width: 332 });
+          openUI("templates", items, { height: 440, width: 440 });
           break;
       }
     });
@@ -425,7 +430,7 @@
       padding: 0,
       spacing: 8
     }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: items.length > 0,
+      hidden: invalidItems.length < 1 && items.length > 0,
       verticalAlignItems: "center",
       height: "hug-contents",
       width: "hug-contents",
@@ -439,7 +444,7 @@
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: playIcon
     })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: items.length === 0 || isPlaying === true,
+      hidden: invalidItems.length > 0 || items.length < 1 || isPlaying === true,
       verticalAlignItems: "center",
       height: "hug-contents",
       width: "hug-contents",
@@ -519,7 +524,7 @@
         offset: { x: 0, y: -1 },
         blur: 0
       },
-      onClick: () => openUI("add")
+      onClick: () => newItem()
     }, /* @__PURE__ */ figma.widget.h(Text, {
       fontSize: 14,
       lineHeight: 24,
@@ -714,7 +719,7 @@
       spacing: 4,
       fill: themeColor,
       cornerRadius: 6,
-      onClick: () => openUI("add")
+      onClick: () => newItem()
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: plusIcon
     }), /* @__PURE__ */ figma.widget.h(Text, {
@@ -771,68 +776,39 @@
           id: items[item].id,
           name: items[item].name,
           time: items[item].time
-        }),
+        }, { height: 240 }),
         padding: 6,
         cornerRadius: 4,
         hoverStyle: {
           fill: "#f0f0f0"
-        }
+        },
+        height: 28,
+        width: 28
       }, /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 16,
         opacity: currentID > items.indexOf(items[item]) ? 0.25 : 1
       }, items[item].emoji)), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-        onClick: () => {
-          const updatedItems = items.map((el) => {
-            if (el.id === items[item].id && el.name === items[item].name) {
-              el.editing = true;
-            }
-            return el;
-          });
-          setItem(updatedItems);
-        },
-        hidden: items[item].editing === true,
         cornerRadius: 4,
-        width: "fill-parent",
-        padding: {
-          left: 4,
-          right: 4,
-          top: 2,
-          bottom: 2
-        },
-        hoverStyle: {
-          stroke: "#E5E5E5"
-        }
-      }, /* @__PURE__ */ figma.widget.h(Text, {
-        fontSize: 14,
-        lineHeight: 24,
-        hidden: items[item].editing === true,
-        fontWeight: currentID === items.indexOf(items[item]) ? 600 : 400,
-        fontFamily: "Inter",
-        textDecoration: currentID > items.indexOf(items[item]) ? "strikethrough" : "none",
-        fill: {
-          type: "solid",
-          color: `${currentID === items.indexOf(items[item]) ? "#18A0FB" : currentID > items.indexOf(items[item]) ? "#B3B3B3" : "#000"}`,
-          opacity: 0.8
-        }
-      }, `${items[item].name.slice(0, truncateLength)}${items[item].name.length <= truncateLength ? "" : "..."}`)), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-        hidden: items[item].editing === false || !items[item].editing,
         width: "fill-parent"
       }, /* @__PURE__ */ figma.widget.h(Input, {
         value: items[item].name,
         fontSize: 14,
-        lineHeight: 24,
-        fontWeight: 400,
-        fontFamily: "Inter",
+        placeholder: "Name your agenda item...",
         inputFrameProps: {
-          stroke: "#18A0FB",
           cornerRadius: 4,
           padding: {
             left: 4,
             right: 4,
             top: 2,
             bottom: 2
+          },
+          hoverStyle: {
+            stroke: "#E5E5E5"
           }
         },
+        lineHeight: 24,
+        fontWeight: 400,
+        fontFamily: "Inter",
         width: "fill-parent",
         inputBehaviour: "truncate",
         onTextEditEnd: (e) => {
@@ -856,7 +832,17 @@
           top: 4,
           bottom: 4
         },
-        spacing: 4
+        cornerRadius: 4,
+        spacing: 4,
+        onClick: () => openUI("editTime", {
+          emoji: items[item].emoji,
+          id: items[item].id,
+          name: items[item].name,
+          time: items[item].time
+        }, { height: 171, width: 200 }),
+        hoverStyle: {
+          stroke: "#e5e5e5"
+        }
       }, /* @__PURE__ */ figma.widget.h(SVG, {
         src: currentID === items.indexOf(items[item]) ? timeIconBlue : currentID > items.indexOf(items[item]) ? checkIcon : timeIcon
       }), /* @__PURE__ */ figma.widget.h(Text, {
@@ -904,15 +890,6 @@
         padding: 6,
         spacing: 0
       }, /* @__PURE__ */ figma.widget.h(SVG, {
-        src: editIconDisabled
-      })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-        verticalAlignItems: "center",
-        horizontalAlignItems: "center",
-        height: "hug-contents",
-        width: "hug-contents",
-        padding: 6,
-        spacing: 0
-      }, /* @__PURE__ */ figma.widget.h(SVG, {
         src: duplicateIconDisabled
       }))), /* @__PURE__ */ figma.widget.h(AutoLayout, {
         hidden: isLocked,
@@ -939,26 +916,6 @@
         }
       }, /* @__PURE__ */ figma.widget.h(SVG, {
         src: deleteIcon
-      })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-        verticalAlignItems: "center",
-        horizontalAlignItems: "center",
-        height: "hug-contents",
-        width: "hug-contents",
-        fill: currentID === items.indexOf(items[item]) ? "#EDF5FA" : currentID > items.indexOf(items[item]) ? "#F7F7F7" : "#FFF",
-        padding: 6,
-        cornerRadius: 4,
-        hoverStyle: {
-          fill: "#f0f0f0"
-        },
-        spacing: 0,
-        onClick: () => openUI("edit", {
-          emoji: items[item].emoji,
-          id: items[item].id,
-          name: items[item].name,
-          time: items[item].time
-        })
-      }, /* @__PURE__ */ figma.widget.h(SVG, {
-        src: editIcon
       })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
         verticalAlignItems: "center",
         horizontalAlignItems: "center",
