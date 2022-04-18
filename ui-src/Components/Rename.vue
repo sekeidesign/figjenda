@@ -80,7 +80,7 @@ if (props.agendaInfo) {
       </button>
       <input
         type="text"
-        placeholder="Item name"
+        placeholder="Agenda name"
         class="input"
         ref="nameInput"
         v-model="localAgendaName"
@@ -129,6 +129,7 @@ if (props.agendaInfo) {
   position: relative;
   display: flex;
   align-items: center;
+  justify-content: start;
   flex-grow: 3;
 }
 .emoji-input {
@@ -142,6 +143,7 @@ if (props.agendaInfo) {
   background-color: transparent;
   color: rgba(0, 0, 0, 0.3);
   height: 24px;
+  width: 24px;
   &:hover {
     background: rgba(0, 0, 0, 0.06);
   }

@@ -140,6 +140,7 @@
   }
   function FigJenda() {
     const [items, setItem] = useSyncedState("items", []);
+    const invalidItems = items.filter((el) => el.time < 1);
     const [isPlaying, togglePlay] = useSyncedState("isPlaying", false);
     const [isLocked, toggleLock] = useSyncedState("isLocked", false);
     const [isAutoPlay, toggleAutoPlay] = useSyncedState("isAutoPlay", true);
@@ -154,16 +155,6 @@
       return new Promise((resolve) => {
         showUI(__html__, options);
         handleEvent("close", () => {
-          figma.closePlugin();
-          resolve();
-        });
-        handleEvent("add", (data2) => {
-          const lastIndex = items.length - 1;
-          data2.id = items[lastIndex] ? items[lastIndex].id + 1 : 1;
-          let updatedItems = items;
-          console.log(data2);
-          updatedItems.push(data2);
-          setItem(updatedItems);
           figma.closePlugin();
           resolve();
         });
@@ -212,6 +203,18 @@
         });
       });
     }
+    const newItem = () => {
+      const lastIndex = items.length - 1;
+      const itemTemplate = {
+        itemName: "",
+        emoji: "\u{1F4CC}",
+        time: 0,
+        id: items[lastIndex] ? items[lastIndex].id + 1 : 1
+      };
+      let updatedItems = items;
+      updatedItems.push(itemTemplate);
+      setItem(updatedItems);
+    };
     function toMins(time) {
       return Math.floor(time / 60);
     }
@@ -427,7 +430,7 @@
       padding: 0,
       spacing: 8
     }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: items.length > 0,
+      hidden: invalidItems.length < 1 && items.length > 0,
       verticalAlignItems: "center",
       height: "hug-contents",
       width: "hug-contents",
@@ -441,7 +444,7 @@
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: playIcon
     })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-      hidden: items.length === 0 || isPlaying === true,
+      hidden: invalidItems.length > 0 || items.length < 1 || isPlaying === true,
       verticalAlignItems: "center",
       height: "hug-contents",
       width: "hug-contents",
@@ -521,7 +524,7 @@
         offset: { x: 0, y: -1 },
         blur: 0
       },
-      onClick: () => openUI("add")
+      onClick: () => newItem()
     }, /* @__PURE__ */ figma.widget.h(Text, {
       fontSize: 14,
       lineHeight: 24,
@@ -716,7 +719,7 @@
       spacing: 4,
       fill: themeColor,
       cornerRadius: 6,
-      onClick: () => openUI("add")
+      onClick: () => newItem()
     }, /* @__PURE__ */ figma.widget.h(SVG, {
       src: plusIcon
     }), /* @__PURE__ */ figma.widget.h(Text, {
@@ -778,7 +781,9 @@
         cornerRadius: 4,
         hoverStyle: {
           fill: "#f0f0f0"
-        }
+        },
+        height: 28,
+        width: 28
       }, /* @__PURE__ */ figma.widget.h(Text, {
         fontSize: 16,
         opacity: currentID > items.indexOf(items[item]) ? 0.25 : 1
@@ -788,6 +793,7 @@
       }, /* @__PURE__ */ figma.widget.h(Input, {
         value: items[item].name,
         fontSize: 14,
+        placeholder: "Name your agenda item...",
         inputFrameProps: {
           cornerRadius: 4,
           padding: {
@@ -884,15 +890,6 @@
         padding: 6,
         spacing: 0
       }, /* @__PURE__ */ figma.widget.h(SVG, {
-        src: editIconDisabled
-      })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-        verticalAlignItems: "center",
-        horizontalAlignItems: "center",
-        height: "hug-contents",
-        width: "hug-contents",
-        padding: 6,
-        spacing: 0
-      }, /* @__PURE__ */ figma.widget.h(SVG, {
         src: duplicateIconDisabled
       }))), /* @__PURE__ */ figma.widget.h(AutoLayout, {
         hidden: isLocked,
@@ -919,26 +916,6 @@
         }
       }, /* @__PURE__ */ figma.widget.h(SVG, {
         src: deleteIcon
-      })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
-        verticalAlignItems: "center",
-        horizontalAlignItems: "center",
-        height: "hug-contents",
-        width: "hug-contents",
-        fill: currentID === items.indexOf(items[item]) ? "#EDF5FA" : currentID > items.indexOf(items[item]) ? "#F7F7F7" : "#FFF",
-        padding: 6,
-        cornerRadius: 4,
-        hoverStyle: {
-          fill: "#f0f0f0"
-        },
-        spacing: 0,
-        onClick: () => openUI("edit", {
-          emoji: items[item].emoji,
-          id: items[item].id,
-          name: items[item].name,
-          time: items[item].time
-        })
-      }, /* @__PURE__ */ figma.widget.h(SVG, {
-        src: editIcon
       })), /* @__PURE__ */ figma.widget.h(AutoLayout, {
         verticalAlignItems: "center",
         horizontalAlignItems: "center",

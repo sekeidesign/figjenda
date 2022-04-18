@@ -23,16 +23,9 @@ const localEmoji = ref('');
 const localName = ref('');
 const localTime = ref(0);
 const localId = ref(null);
-//const rawTime = ref();
-
-const nameInput = ref(null);
 
 const isValid = computed(() => {
-  return localEmoji.value && localName.value && localTime.value > 0;
-});
-
-const isAgendaValid = computed(() => {
-  return localEmoji.value && localName.value;
+  return localTime.value > 0;
 });
 
 function toMins(localTime) {

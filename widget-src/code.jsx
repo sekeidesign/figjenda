@@ -61,6 +61,7 @@ function FigJenda() {
   // ---------------------------
   // ---- STATE ----------------
   const [items, setItem] = useSyncedState('items', []);
+  const invalidItems = items.filter((el) => el.time < 1);
   const [isPlaying, togglePlay] = useSyncedState('isPlaying', false);
   const [isLocked, toggleLock] = useSyncedState('isLocked', false);
   const [isAutoPlay, toggleAutoPlay] = useSyncedState('isAutoPlay', true);
@@ -79,18 +80,6 @@ function FigJenda() {
 
       // Close the plugin
       handleEvent('close', () => {
-        figma.closePlugin();
-        resolve();
-      });
-
-      // Add item to items array from the plugin
-      handleEvent('add', (data) => {
-        const lastIndex = items.length - 1;
-        data.id = items[lastIndex] ? items[lastIndex].id + 1 : 1;
-        let updatedItems = items;
-        console.log(data);
-        updatedItems.push(data);
-        setItem(updatedItems);
         figma.closePlugin();
         resolve();
       });
@@ -149,6 +138,20 @@ function FigJenda() {
       });
     });
   }
+
+  // Add item to items array from the plugin
+  const newItem = () => {
+    const lastIndex = items.length - 1;
+    const itemTemplate = {
+      itemName: '',
+      emoji: '📌',
+      time: 0,
+      id: items[lastIndex] ? items[lastIndex].id + 1 : 1,
+    };
+    let updatedItems = items;
+    updatedItems.push(itemTemplate);
+    setItem(updatedItems);
+  };
 
   // Convert time value to minutes
   function toMins(time) {
@@ -412,7 +415,7 @@ function FigJenda() {
         spacing={8}
       >
         <AutoLayout
-          hidden={items.length > 0}
+          hidden={invalidItems.length < 1 && items.length > 0}
           verticalAlignItems="center"
           height="hug-contents"
           width="hug-contents"
@@ -427,7 +430,9 @@ function FigJenda() {
           <SVG src={playIcon}></SVG>
         </AutoLayout>
         <AutoLayout
-          hidden={items.length === 0 || isPlaying === true}
+          hidden={
+            invalidItems.length > 0 || items.length < 1 || isPlaying === true
+          }
           verticalAlignItems="center"
           height="hug-contents"
           width="hug-contents"
@@ -516,7 +521,7 @@ function FigJenda() {
         offset: { x: 0, y: -1 },
         blur: 0,
       }}
-      onClick={() => openUI('add')}
+      onClick={() => newItem()}
     >
       <Text
         fontSize={14}
@@ -750,7 +755,7 @@ function FigJenda() {
           spacing={4}
           fill={themeColor}
           cornerRadius={6}
-          onClick={() => openUI('add')}
+          onClick={() => newItem()}
         >
           <SVG src={plusIcon}></SVG>
           <Text
@@ -836,6 +841,8 @@ function FigJenda() {
             hoverStyle={{
               fill: '#f0f0f0',
             }}
+            height={28}
+            width={28}
           >
             <Text
               fontSize={16}
@@ -848,6 +855,7 @@ function FigJenda() {
             <Input
               value={items[item].name}
               fontSize={14}
+              placeholder="Name your agenda item..."
               inputFrameProps={{
                 cornerRadius: 4,
                 padding: {
@@ -981,16 +989,6 @@ function FigJenda() {
             padding={6}
             spacing={0}
           >
-            <SVG src={editIconDisabled}></SVG>
-          </AutoLayout>
-          <AutoLayout
-            verticalAlignItems="center"
-            horizontalAlignItems="center"
-            height="hug-contents"
-            width="hug-contents"
-            padding={6}
-            spacing={0}
-          >
             <SVG src={duplicateIconDisabled}></SVG>
           </AutoLayout>
         </AutoLayout>
@@ -1026,35 +1024,6 @@ function FigJenda() {
             }}
           >
             <SVG src={deleteIcon}></SVG>
-          </AutoLayout>
-          <AutoLayout
-            verticalAlignItems="center"
-            horizontalAlignItems="center"
-            height="hug-contents"
-            width="hug-contents"
-            fill={
-              currentID === items.indexOf(items[item])
-                ? '#EDF5FA'
-                : currentID > items.indexOf(items[item])
-                ? '#F7F7F7'
-                : '#FFF'
-            }
-            padding={6}
-            cornerRadius={4}
-            hoverStyle={{
-              fill: '#f0f0f0',
-            }}
-            spacing={0}
-            onClick={() =>
-              openUI('edit', {
-                emoji: items[item].emoji,
-                id: items[item].id,
-                name: items[item].name,
-                time: items[item].time,
-              })
-            }
-          >
-            <SVG src={editIcon}></SVG>
           </AutoLayout>
           <AutoLayout
             verticalAlignItems="center"
