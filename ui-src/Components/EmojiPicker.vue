@@ -33,7 +33,7 @@ function done(modeData) {
     time: localTime.value,
     id: localId.value,
   };
-  console.log(data);
+  //console.log(data);
   emit('done', data);
 }
 
