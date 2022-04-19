@@ -771,12 +771,18 @@
         },
         spacing: 0
       }, /* @__PURE__ */ figma.widget.h(AutoLayout, {
-        onClick: () => openUI("emoji", {
+        onClick: (e) => openUI("emoji", {
           emoji: items[item].emoji,
           id: items[item].id,
           name: items[item].name,
           time: items[item].time
-        }, { height: 240 }),
+        }, {
+          height: 240,
+          position: {
+            x: e.canvasX,
+            y: e.canvasY + 16
+          }
+        }),
         padding: 6,
         cornerRadius: 4,
         hoverStyle: {
@@ -834,12 +840,21 @@
         },
         cornerRadius: 4,
         spacing: 4,
-        onClick: () => openUI("editTime", {
-          emoji: items[item].emoji,
-          id: items[item].id,
-          name: items[item].name,
-          time: items[item].time
-        }, { height: 171, width: 200 }),
+        onClick: (e) => {
+          openUI("editTime", {
+            emoji: items[item].emoji,
+            id: items[item].id,
+            name: items[item].name,
+            time: items[item].time
+          }, {
+            height: 171,
+            width: 200,
+            position: {
+              x: e.canvasX,
+              y: e.canvasY + 16
+            }
+          });
+        },
         hoverStyle: {
           stroke: "#e5e5e5"
         }
