@@ -824,7 +824,7 @@ function FigJenda() {
           spacing={0}
         >
           <AutoLayout
-            onClick={() =>
+            onClick={(e) =>
               openUI(
                 'emoji',
                 {
@@ -833,7 +833,13 @@ function FigJenda() {
                   name: items[item].name,
                   time: items[item].time,
                 },
-                { height: 240 }
+                {
+                  height: 240,
+                  position: {
+                    x: e.canvasX,
+                    y: e.canvasY + 16,
+                  },
+                }
               )
             }
             padding={6}
@@ -902,7 +908,7 @@ function FigJenda() {
           }}
           cornerRadius={4}
           spacing={4}
-          onClick={() =>
+          onClick={(e) => {
             openUI(
               'editTime',
               {
@@ -911,9 +917,16 @@ function FigJenda() {
                 name: items[item].name,
                 time: items[item].time,
               },
-              { height: 171, width: 200 }
-            )
-          }
+              {
+                height: 171,
+                width: 200,
+                position: {
+                  x: e.canvasX,
+                  y: e.canvasY + 16,
+                },
+              }
+            );
+          }}
           hoverStyle={{
             stroke: '#e5e5e5',
           }}
