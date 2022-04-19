@@ -53,6 +53,7 @@ handleEvent('emoji', (data) => {
   item.value.itemName = data.name;
   item.value.time = data.time;
   item.value.id = data.id;
+  item.value.index = data.index;
 });
 
 handleEvent('edit', (data) => {

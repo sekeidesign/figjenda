@@ -774,7 +774,8 @@
           emoji: items[item].emoji,
           id: items[item].id,
           name: items[item].name,
-          time: items[item].time
+          time: items[item].time,
+          index: items.indexOf(items[item])
         }, {
           height: 240,
           position: {

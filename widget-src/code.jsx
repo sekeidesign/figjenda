@@ -830,6 +830,7 @@ function FigJenda() {
                   id: items[item].id,
                   name: items[item].name,
                   time: items[item].time,
+                  index: items.indexOf(items[item]),
                 },
                 {
                   height: 240,
