@@ -29,6 +29,8 @@ const item = ref({
   itemName: '',
   time: 0,
   id: null,
+  index: null,
+  editing: false,
 });
 
 const agenda = ref({
@@ -67,6 +69,7 @@ handleEvent('editTime', (data) => {
   item.value.itemName = data.name;
   item.value.time = data.time;
   item.value.id = data.id;
+  item.value.index = data.index;
 });
 
 handleEvent('rename', (data) => {
@@ -102,6 +105,7 @@ function pluginDone(data) {
         emoji: data.selectedEmoji,
         time: data.time,
         editing: false,
+        index: data.index,
       };
       dispatch('editDone', obj);
       break;

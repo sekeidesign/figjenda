@@ -178,10 +178,9 @@
         });
         handleEvent("editDone", (data2) => {
           let updatedItems = items;
-          const index = items.findIndex((item) => {
-            return item.id === data2.id;
-          });
-          updatedItems[index] = data2;
+          console.log(data2.index);
+          updatedItems[data2.index] = data2;
+          console.log(updatedItems);
           setItem(updatedItems);
           figma.closePlugin();
           resolve();
@@ -818,13 +817,9 @@
         width: "fill-parent",
         inputBehaviour: "truncate",
         onTextEditEnd: (e) => {
-          const updatedItems = items.map((el) => {
-            if (el.id === items[item].id && el.name === items[item].name) {
-              el.name = e.characters;
-              el.editing = false;
-            }
-            return el;
-          });
+          const updatedItems = items;
+          const currentIndex = items.indexOf(items[item]);
+          items[currentIndex].name = e.characters;
           setItem(updatedItems);
         }
       }))), /* @__PURE__ */ figma.widget.h(AutoLayout, {
@@ -841,9 +836,11 @@
         cornerRadius: 4,
         spacing: 4,
         onClick: (e) => {
+          console.log(items.indexOf(items[item]));
           openUI("editTime", {
             emoji: items[item].emoji,
             id: items[item].id,
+            index: items.indexOf(items[item]),
             name: items[item].name,
             time: items[item].time
           }, {
@@ -927,7 +924,9 @@
         },
         spacing: 0,
         onClick: () => {
-          setItem(items.filter((thing) => thing.id != items[item].id));
+          const indexToDelete = items.indexOf(items[item]);
+          items.splice(indexToDelete, 1);
+          setItem(items);
         }
       }, /* @__PURE__ */ figma.widget.h(SVG, {
         src: deleteIcon
@@ -944,16 +943,16 @@
         },
         spacing: 0,
         onClick: () => {
-          const lastIndex = items.length - 1;
-          const ogIndex = items.findIndex((element) => element.id === items[item].id);
+          const lastId = items.length - 1;
+          const currentIndex = items.indexOf(items[item]);
           const duplicatedItem = {
             emoji: items[item].emoji,
-            id: items[lastIndex].id + 1,
+            id: items[lastId].id + 1,
             name: items[item].name,
             time: items[item].time
           };
           let updatedItems = items;
-          updatedItems.push(duplicatedItem);
+          updatedItems.splice(currentIndex, 0, duplicatedItem);
           setItem(updatedItems);
         }
       }, /* @__PURE__ */ figma.widget.h(SVG, {

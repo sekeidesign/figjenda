@@ -15,6 +15,8 @@ function done(modeData) {
     selectedEmoji: localEmoji.value,
     time: localTime.value,
     id: localId.value,
+    index: localIndex.value,
+    editing: false,
   };
   emit('done', data);
 }
@@ -23,6 +25,7 @@ const localEmoji = ref('');
 const localName = ref('');
 const localTime = ref(0);
 const localId = ref(null);
+const localIndex = ref(0);
 
 const isValid = computed(() => {
   return localTime.value > 0;
@@ -47,11 +50,12 @@ function test() {
 
 if (props.agendaItem) {
   //console.log("Item exists", props.agendaItem);
-  const { selectedEmoji, itemName, time, id } = props.agendaItem;
+  const { selectedEmoji, itemName, time, id, index } = props.agendaItem;
   localEmoji.value = selectedEmoji;
   localName.value = itemName;
   localTime.value = time;
   localId.value = id;
+  localIndex.value = index;
 }
 </script>
 
