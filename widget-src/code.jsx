@@ -877,7 +877,6 @@ function FigJenda() {
               fontWeight={400}
               fontFamily="Inter"
               width="fill-parent"
-              inputBehavior="truncate"
               onTextEditEnd={(e) => {
                 const updatedItems = items;
                 const currentIndex = items.indexOf(items[item]);
