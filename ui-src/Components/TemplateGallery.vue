@@ -123,7 +123,7 @@ import templates from '../Templates.js';
 }
 .template-item {
   width: calc(50% - 1px);
-  padding: 0.5rem;
+  padding: 1rem;
   cursor: pointer;
   background-color: white;
   &:hover {
@@ -153,7 +153,7 @@ import templates from '../Templates.js';
   border: 1px solid rgba(0, 0, 0, 0);
   border-radius: 0.75rem;
   height: 8rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   overflow: hidden;
   width: 100%;
   padding: 0.5rem;
@@ -176,6 +176,10 @@ import templates from '../Templates.js';
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
 }
+.template-title {
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+}
 .exercise {
   color: rgb(0, 118, 68);
   background-color: rgb(232, 249, 242);
@@ -187,7 +191,7 @@ import templates from '../Templates.js';
 .properties {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 12px;
   align-items: flex-start;
   font-weight: 600;
   font-size: 0.875rem;
