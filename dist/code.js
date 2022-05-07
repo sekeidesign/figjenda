@@ -816,7 +816,6 @@
         fontWeight: 400,
         fontFamily: "Inter",
         width: "fill-parent",
-        inputBehaviour: "truncate",
         onTextEditEnd: (e) => {
           const updatedItems = items;
           const currentIndex = items.indexOf(items[item]);
